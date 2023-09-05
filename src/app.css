@@ -17,3 +17,9 @@ input, textarea, button, select, a {
 	outline: none !important;
 	-webkit-tap-highlight-color: transparent !important;
 }
+
+h3 {
+	font-weight: bold;
+	font-size: 1.5rem; /* text-2xl에 해당하는 크기로 조정 */
+	color: #4a5568; /* text-gray-700에 해당하는 색상으로 조정 */
+  }
