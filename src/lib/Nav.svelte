@@ -1,10 +1,10 @@
 <script>
     import Icon from "./Icon.svelte";
     const nav = [
-        { title: "더보기", path: "/more", icon: "more-horizontal" },
-        { title: "동아리", path: "/club", icon: "users" },
-        { title: "스토리", path: "/", icon: "hash" },
-        { title: "소식", path: "/notice", icon: "send" },
+        { title: "학교 소식", path: "/news", icon: "send" },
+        { title: "게시판", path: "/board", icon: "columns" },
+        { title: "위키", path: "/", icon: "git-branch" },
+        { title: "챗봇", path: "/chat", icon: "message-circle" },
         { title: "마이페이지", path: "/mypage", icon: "user" },
     ];
 
@@ -12,7 +12,7 @@
 </script>
 
 <nav
-    class="flex justify-between items-center sticky bottom-0 max-w-lg w-full py-1 px-2 border-t bg-white"
+    class="flex justify-around items-center fixed bottom-0 max-w-4xl w-full py-1 px-2 border-t bg-white"
 >
     {#each nav as item}
         {#if currentPath === item.path}

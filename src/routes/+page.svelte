@@ -1,23 +1,54 @@
 <script>
 	import Icon from '$lib/Icon.svelte';
 	import Nav from '$lib/Nav.svelte';
-	import PostCard from '$lib/PostCard.svelte';
+	import DocumentCard from '$lib/DocumentCard.svelte';
 	import { onMount } from 'svelte';
-
-	const tags = ['#아무말', '#홍보', '#취업', '#연애', '#술', '#유머', '#패션', '#헬스'];
+	import { goto } from '$app/navigation';
+	import logo from '$lib/assets/logo.png';
 
 	let hideHeader = false;
 	let lastScrollPosition = 0;
+
+	let userRanking = [
+		{
+			name: '김아주',
+		},
+		{
+			name: '김아주',
+		},
+		{
+			name: '김아주',
+		},
+		{
+			name: '김아주',
+		},
+		{
+			name: '김아주',
+		},
+		{
+			name: '김아주',
+		},
+		{
+			name: '김아주',
+		},
+		{
+			name: '김아주',
+		},
+		{
+			name: '김아주',
+		},
+		{
+			name: '김아주',
+		},
+	];
 
 	onMount(() => {
 		const handleScroll = () => {
 			const currentScrollPosition = window.scrollY;
 
 			if (currentScrollPosition > lastScrollPosition && currentScrollPosition > 50) {
-				// 아래로 스크롤하고 50px 이상인 경우
 				hideHeader = true;
 			} else {
-				// 위로 스크롤하는 경우
 				hideHeader = false;
 			}
 
@@ -30,9 +61,9 @@
 	});
 </script>
 
-<header class="sticky top-0 {hideHeader ? 'hide-animation' : ''}">
-	<div class="flex items-center max-w-lg justify-between gap-4 p-4 bg-white">
-		<a href="/"><img src="/logo.png" alt="홈아이콘" class="inline rounded-xl w-14" /></a>
+<header class="z-30 sticky top-0 {hideHeader ? 'hide-animation' : ''} border-b">
+	<div class="flex items-center max-w-4xl justify-between gap-4 p-4 bg-white">
+		<a href="/"><img src={logo} alt="홈아이콘" class="inline rounded-xl w-14" /></a>
 		<div
 			class="flex items-center justify-center w-full h-10 px-4 bg-gray-100 rounded-full border-none gap-2"
 		>
@@ -50,69 +81,73 @@
 			/>
 		</button>
 	</div>
-	<!-- 태그 -->
-	<div class="mb-4 pb-4 bg-white max-w-lg border-b">
-		<div class="overflow-x-auto flex gap-2">
-			{#each tags as tag, i}
-				<div class="{i == 0 ? 'ml-4' : ''} {i == tags.length - 1 ? 'mr-4' : ''}">
-					<button class="px-3 py-1 rounded-full bg-blue-500 text-white whitespace-nowrap text-sm">
-						{tag}
-					</button>
+</header>
+
+<main>
+	<!-- 설명 -->
+	<div class="mt-4 px-4 grid place-items-center text-lg font-bold text-gray-500">
+		<div class="text-center">
+			아주대학교의 모든 것,<br />
+			<span class="text-blue-500">아주위키</span>에 오신 것을 환영합니다.
+			<div class="mt-4 text-sm font-normal whitespace-wrap">
+				아주 위키는 아주대학교 학생들이 함께 만들어가는 위키입니다.<br />
+				아주대학교 구성원이라면 누구나 자유롭게 문서를 편집할 수 있습니다.
+			</div>
+		</div>
+	</div>
+
+	<!-- 리더보드 -->
+	<h3 class="px-4 pt-4">
+		리더보드
+	</h3>
+	<div class="relative border rounded-lg p-4 m-4">
+		<div class="absolute left-4 -top-2.5 text-gray-500 text-sm font-normal bg-white px-1">
+			이번 주 아주위키 기여도 TOP 10
+		</div>
+		<div class="grid grid-rows-5 grid-flow-col text-gray-700 gap-1">
+			{#each userRanking as user, i}
+				<div class="flex items-center gap-1">
+					<div class="rounded-full w-5 h-5 flex items-center justify-center { i == 0 ? 'bg-yellow-300' : (i == 1 ? 'bg-gray-200' : (i == 2 ? 'bg-yellow-500' : 'bg-blue-200'))}">
+						{i+1}
+					</div>
+					{user.name}
 				</div>
 			{/each}
 		</div>
 	</div>
-</header>
 
-<main class="">
-	<!-- 실시간 인기 포스트 -->
-	<!-- <div class="flex justify-between items-center">
-        <h3 class="p-4 font-bold text-lg text-gray-700">실시간 인기 포스트 🔥</h3>
-        <button class="p-4 text-sm text-gray-600 flex items-center">
-            더 보기
-            <Icon icon="chevron-right" size={16} />
-        </button>
-    </div> -->
-	<!-- 게시글 카드 -->
-	<!-- {#each "012" as i}
-        <PostCard />
-        <hr class="my-4" />
-    {/each} -->
+	<!-- 최근 가장 많이 검색된 문서 -->
+	<h3 class="px-4 pt-4">
+		최근 가장 많이 검색된 문서
+	</h3>
+	<ul class="mt-4">
+		{#each "012" as i}
+			<DocumentCard />
+			<hr class="my-2" />
+		{/each}
+	</ul>
 
-	<!-- 최신 포스트 -->
-	<!-- <h3 class="mt-4 p-4 pb-0 font-bold text-lg text-gray-700">최신 포스트 🍃</h3> -->
-
-	{#each '012345678912312321' as i}
-		<PostCard />
-		<hr class="my-4" />
-	{/each}
+	<!-- 최근 수정/등록된 문서 -->
+	<h3 class="px-4 pt-4">
+		최근 수정/등록된 문서
+	</h3>
+	<ul class="mt-4">
+		{#each "012" as i}
+			<DocumentCard />
+			<hr class="my-2" />
+		{/each}
+	</ul>
 </main>
 
+<div class="h-16" />
 
-<!-- 최상단가기 버튼 -->
-<!-- {#if showButton}
-  <button on:click={scrollToTop} class="p-2 shadow bg-white text-blue-500 fixed bottom-20 right-5 rounded-full">
-    <Icon icon="chevron-up" size={20} />
-  </button>
-{/if} -->
-
-<!-- 포스트 작성 -->
-<div class="w-full sticky bottom-20 max-w-lg flex items-center justify-center">
-	<button class="shadow-md rounded-full bg-blue-500 text-white">
-		<div class="flex items-center gap-2 text-sm p-4">
-			<Icon icon="plus" size={24} />
-		</div>
-	</button>
-</div>
-
-<!-- 네비게이션 바 -->
-<Nav />
+<Nav currentPath="/" />
 
 <style>
-  header {
-    transition: transform 0.3s ease-in-out;
-  }
-  .hide-animation {
-    transform: translateY(-100%);
-  }
+	header {
+	  transition: transform 0.3s ease-in-out;
+	}
+	.hide-animation {
+	  transform: translateY(-100%);
+	}
 </style>

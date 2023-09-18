@@ -2,8 +2,8 @@
     import Icon from "$lib/Icon.svelte";
     import { truncate } from "$lib/utils.js";
 
-    export let heading = "오늘 밤 10시에 농구장에서 경기";
-    export let content = "아주대학교 농구장에서 아주대 vs 동국대 농구경기가 열립니다. 아주대학교 학생들은 무료로 입장할 수 있습니다. 10분전까지 입장 가능합니다. 다들 오셔서 응원하고 경품도 받아가세요!";
+    export let heading = "오늘 15시 아주대 vs 동국대 축구 경기";
+    export let content = "아주대학교 축구장에서 아주대 vs 동국대 축구경기가 열립니다. 아주대학교 학생들은 무료로 입장할 수 있습니다. 10분전까지 입장 가능합니다. 다들 오셔서 응원하고 경품도 받아가세요!";
     export let like = 231;
     export let comment = 34;
     export let view = 1193;
