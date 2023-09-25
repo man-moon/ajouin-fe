@@ -8,7 +8,7 @@
 </script>
 
 <svelte:head>
-	<title>아주위키: Ajou Wiki</title>
+	<title>아주대 공지모아</title>
 	<meta
 		name="viewport"
 		content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"

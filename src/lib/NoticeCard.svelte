@@ -12,7 +12,7 @@
     };
 </script>
 
-<a href={notice.link} target='_blank' class="block px-4 py-2">
+<a data-sveltekit-preload-data="eager" href={notice.link} target='_blank' class="block px-4 py-2">
     <h4 class="text-gray-700 font-medium text-sm whitespace-wrap">
         {notice.title}
     </h4>

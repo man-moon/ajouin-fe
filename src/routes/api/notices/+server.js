@@ -1,7 +1,7 @@
 import { json } from 'stream/consumers';
 
 async function getResponse(notices) {
-    const response = await fetch('http://localhost:8080/notices', {
+    const response = await fetch('http://ajou-community-env.eba-z2tgagdq.ap-northeast-2.elasticbeanstalk.com/notices', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json'
