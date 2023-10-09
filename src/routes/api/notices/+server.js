@@ -1,23 +1,29 @@
-import { json } from 'stream/consumers';
-
-async function getResponse(notices) {
-    const response = await fetch('http://ajou-community-env.eba-z2tgagdq.ap-northeast-2.elasticbeanstalk.com/notices', {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({ notices })
-    });
-    if (response.ok) {
-        return response;
+async function getResponse(notices, accessToken) {
+    let response;
+    if(accessToken == '') {
+        response = await fetch('http://Ajou-community-env.eba-z2tgagdq.ap-northeast-2.elasticbeanstalk.com/notices', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ notices })
+        });
     } else {
-        console.log("response error");
+        response = await fetch('http://Ajou-community-env.eba-z2tgagdq.ap-northeast-2.elasticbeanstalk.com/notices', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': accessToken,
+            },
+            body: JSON.stringify({ notices })
+        });
     }
+    return response;
 }
 
 export async function POST({ request }) {
     const { notices } = await request.json();
+    const accessToken = await request.headers.get('Authorization');
 
-    const response = await getResponse(notices);
-    return response;
+    return await getResponse(notices, accessToken);
 }

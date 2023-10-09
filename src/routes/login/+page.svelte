@@ -1,20 +1,30 @@
 <script>
     import { goto } from "$app/navigation";
-    import { toastMessage, API_BASE_URL, ACCESS_TOKEN } from '$lib/stores';
+    import { toastMessage, ACCESS_TOKEN } from '$lib/stores';
+    import { onMount } from "svelte";
+    import Icon from "$lib/Icon.svelte";
+
+    onMount(async () => {
+        const accessToken = localStorage.getItem('accessToken');
+        if(accessToken) {
+            $ACCESS_TOKEN = accessToken;
+            toastMessage.set("이미 로그인 되어있습니다.");
+            goto('/');
+        }
+    });
 
     let email = "";
     let password = "";
 
     async function login() {
-        console.log("login")
-        const response = await fetch(`${API_BASE_URL}/auth/login`, {
+        const response = await fetch('api/auth/login', {
 			method: 'POST',
             headers: {
 				'Content-Type': 'application/json'
 			},
 			body: JSON.stringify({
-                "email": {"value": email + "@ajou.ac.kr"},
-                "password": password
+                email: {value: email + "@ajou.ac.kr"},
+                password: password
             })
 		});
 
@@ -36,9 +46,12 @@
 
 <header class="mt-32 flex flex-col items-center justify-center">
     <h1 class="flex text-blue-500 text-2xl font-extrabold">
-        아주인
+        아주대학교 공지모아
     </h1>
-    <div class="text-gray-500 mt-2">아주대학교 대표 커뮤니티</div>
+    <a href="/notice" class="border-b border-gray-700 flex items-center text-gray-500 mt-2 text-center">
+        공지사항 보러가기
+        <Icon icon={"chevron-right"} size={18} />
+    </a>
 </header>
 
 <main class="mt-12 px-4 md:px-12">
@@ -54,7 +67,7 @@
         </button>
     </div>
 
-    <a href="#">
+    <a href="/resetpassword">
         <div class="text-sm mt-4 w-full text-center text-gray-500 underline underline-offset-4">
             비밀번호를 잊으셨나요?
         </div>

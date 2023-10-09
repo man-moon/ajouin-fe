@@ -49,7 +49,7 @@
 		}, 1000);
 	}
 	async function sendVerificationEmail() {
-		const response = await fetch('/api/auth/emailrequest', {
+		const response = await fetch('/api/auth/resetpassword/emailrequest', {
 			method: 'POST',
 			headers: {
 				'Content-Type': 'application/json'
@@ -70,7 +70,7 @@
 		else if (!response.ok) {
             response.json().then(data => {
                 toastMessage.set(data.message);
-                if(data.message == '이미 사용중인 이메일이에요.') {
+                if(data.message == '해당 이메일로 가입된 계정이 없어요') {
                     goto('/login')
                 }
             });
@@ -117,25 +117,22 @@
         isSendButtonDisabled = false;
 	}
 
-    async function signUp() {
-        const response = await fetch('api/auth/signup', {
+    async function resetPassword() {
+        const response = await fetch('api/auth/resetpassword', {
 			method: 'POST',
             headers: {
 				'Content-Type': 'application/json'
 			},
 			body: JSON.stringify({
+                "id": verificationId,
                 "email": {"value": email+"@ajou.ac.kr"},
                 "password": password,
             })
 		});
 
         if(response.ok) {
-            response.json().then(data => {
-                if(data) {
-                    toastMessage.set('회원가입이 완료되었어요');
-                    goto('/login');
-                }
-            });
+            toastMessage.set('비밀번호 변경이 완료되었어요');
+            goto('/login');
         }
 		if (!response.ok) {
             response.json().then(data => {
@@ -169,14 +166,14 @@
 </script>
 
 <!-- step 0: 이메일 인증 -->
-<BackAppbar title="회원가입" />
+<BackAppbar title="비밀번호 재설정" />
 {#if step == 0}
 <main class="m-4">
     <h3>
-        회원가입을 시작할게요
+        비밀번호를 잊으셨나요?
     </h3>
     <div class="mt-2 text-gray-500 ">
-        원활한 서비스 이용을 위해서는<br />학교 이메일 인증이 필요해요.
+        비밀번호를 재설정하기 위해서<br />학교 이메일 인증이 필요해요.
     </div>
     <div class="flex items-center mt-24 gap-4">
         <label class="relative w-full">
@@ -255,7 +252,7 @@
         <input bind:value={password2} minlength="8" type="password" placeholder="비밀번호 재입력" class="mt-8 w-full border border-b border-t-0 rounded-none border-x-0 {isPasswordSame ? 'border-blue-500' : 'border-gray-300'} p-4" />
     </main>
     <button on:click={async()=>{
-        await signUp();
+        await resetPassword();
     }}
     disabled={isStep1ButtonDisabled}
     class="{isStep1ButtonDisabled ? 'bg-gray-300': 'bg-blue-500'} text-white py-4 text-lg w-full fixed bottom-0 w-full max-w-4xl">

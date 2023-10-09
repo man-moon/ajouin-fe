@@ -2,8 +2,15 @@
 	import '../app.css';
 	import Toast from "$lib/Toast.svelte";
 	import { page } from '$app/stores';
-	import { currentPath } from '$lib/stores';
+	import { currentPath, ACCESS_TOKEN } from '$lib/stores';
 	import { onMount } from 'svelte';
+
+	onMount(()=>{
+		const accessToken = localStorage.getItem('accessToken')
+		if(accessToken) {
+			$ACCESS_TOKEN = accessToken;
+		}
+	})
 
 </script>
 
