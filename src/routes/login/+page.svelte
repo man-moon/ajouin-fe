@@ -48,7 +48,7 @@
     <h1 class="flex text-blue-500 text-2xl font-extrabold">
         아주대학교 공지모아
     </h1>
-    <a href="/notice" class="border-b border-gray-700 flex items-center text-gray-500 mt-2 text-center">
+    <a href="/" class="border-b border-gray-700 flex items-center text-gray-500 mt-2 text-center">
         공지사항 보러가기
         <Icon icon={"chevron-right"} size={18} />
     </a>
