@@ -38,11 +38,12 @@
 		bookMarks = data.bookMarks || [];
 
 		const date = new Date(data.latestUpdateTime);
-		const year = date.getFullYear();  // 연도
-		const month = date.getMonth() + 1;  // 월 (0부터 시작하므로 1을 더합니다)
-		const day = date.getDate();  // 일
-		const hours = date.getHours();  // 시
-		const minutes = date.getMinutes();  // 분
+		date.setHours(date.getHours() + 9);
+		const year = date.getFullYear();
+		const month = date.getMonth() + 1;
+		const day = date.getDate();
+		const hours = date.getHours();
+		const minutes = date.getMinutes();
 
 		latestUpdateTime = `${year}년 ${month}월 ${day}일 ${hours}시 ${minutes}분`;
 
