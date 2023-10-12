@@ -4,6 +4,8 @@
 	import { page } from '$app/stores';
 	import { currentPath, ACCESS_TOKEN } from '$lib/stores';
 	import { onMount } from 'svelte';
+	import { dev } from '$app/environment';
+	import { inject } from '@vercel/analytics';
 
 	onMount(()=>{
 		const accessToken = localStorage.getItem('accessToken')
@@ -11,6 +13,8 @@
 			$ACCESS_TOKEN = accessToken;
 		}
 	})
+
+	inject({ mode: dev ? 'development' : 'production' });
 
 </script>
 
