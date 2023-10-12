@@ -177,6 +177,7 @@
     </h3>
     <div class="mt-2 text-gray-500 ">
         원활한 서비스 이용을 위해서는<br />학교 이메일 인증이 필요해요.
+        <div class="mt-2 text-xs text-gray-400">※ 제공된 이메일은 중복가입을 방지하고, 이용자 식별을 위한 목적으로만 사용됩니다.</div>
     </div>
     <div class="flex items-center mt-24 gap-4">
         <label class="relative w-full">
