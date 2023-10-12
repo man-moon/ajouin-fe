@@ -3,7 +3,7 @@
   export let title = "TEXT";
 </script>
 
-<div class="relative sticky top-0 bg-white h-14 items-center border-b flex">
+<div class="relative sticky top-0 bg-white h-14 items-center border-b flex z-20">
     <button on:click={()=>{history.back()}} class="absolute p-4">
       <svg
         xmlns="http://www.w3.org/2000/svg"
