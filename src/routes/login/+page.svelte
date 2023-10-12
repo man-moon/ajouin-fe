@@ -54,7 +54,7 @@
     </a>
 </header>
 
-<main class="mt-12 px-4 md:px-12">
+<form on:submit|preventDefault={login} class="mt-12 px-4 md:px-48">
     <label class="relative flex">
         <input bind:value={email} type="text" placeholder="이메일" class="w-full h-12 px-4 py-2 border border-gray-300 rounded-lg" />
         <div class="absolute top-3 right-4 text-gray-400">@ajou.ac.kr</div>
@@ -62,7 +62,7 @@
     <input bind:value={password} type="password" placeholder="비밀번호" class="mt-2 w-full h-12 px-4 py-2 border border-gray-300 rounded-lg" />
 
     <div class="mt-4 w-full">
-        <button on:click={login} class="bg-blue-500 text-white py-3 text-lg w-full rounded-lg">
+        <button type="submit" class="bg-blue-500 text-white py-3 text-lg w-full rounded-lg">
             로그인
         </button>
     </div>
@@ -74,8 +74,8 @@
     </a>
 
     <div class="mt-24 w-full">
-        <button on:click={()=>{goto("/signup")}} class="text-blue-500 border border-blue-500 bg-white py-3 text-lg w-full rounded-lg">
+        <button type="button" on:click={()=>{goto("/signup")}} class="text-blue-500 border border-blue-500 bg-white py-3 text-lg w-full rounded-lg">
             학교 이메일로 회원가입
         </button>
     </div>
-</main>
+</form>
