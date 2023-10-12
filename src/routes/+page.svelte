@@ -4,13 +4,12 @@
 	import { onMount } from 'svelte';
 	import { browser } from '$app/environment';
 	import logo from '$lib/assets/logo.png';
-	import { ACCESS_TOKEN, toastMessage } from '$lib/stores';
+	import { ACCESS_TOKEN, toastMessage, myBookMark } from '$lib/stores';
 
 	let hideHeader = false;
 	let lastScrollPosition = 0;
 
 	let latestUpdateTime = '2023-10-10 00:00:00';
-	let bookMarks = [];
 	let fetchedNotices = [];
 	let fetchedTypes;
 	//리스트로 보여줄 공지사항 배열
@@ -35,7 +34,11 @@
 		const data = await response.json();
 
 		fetchedNotices = data.notices;
-		bookMarks = data.bookMarks || [];
+		$myBookMark = data.bookMarks || [];
+		$myBookMark = $myBookMark.map((b) => {
+			b.isBookMarked = true;
+			return b;
+		});
 
 		const date = new Date(data.latestUpdateTime);
 		date.setHours(date.getHours() + 9);
@@ -51,7 +54,7 @@
 		//북마크는 List<SchoolNotice>형태로 되어있음
 		//SchoolNotice내에 id 정보가 있음
 		fetchedNotices = fetchedNotices.map((n) => {
-			n.isBookMarked = bookMarks.filter((b) => b.id == n.id).length > 0;
+			n.isBookMarked = $myBookMark.filter((b) => b.id == n.id).length > 0;
 			return n;
 		});
 
@@ -219,15 +222,18 @@
 <!-- 헤더 -->
 <!-- 필터 선택창 닫았을 때 화면 -->
 {#if noticeFilterPage == null}
-	<h1 class="z-30 sticky top-0 border-b bg-white h-16 flex items-center justify-between p-4">
+	<div class="z-30 sticky top-0 border-b bg-white h-16 flex items-center justify-between p-4">
 		<a href="/" class="flex items-center gap-4">
-            <img src={logo} alt="홈아이콘" class="w-8" />
-			<div class="text-xl font-semibold">아주대학교 공지모아</div>
+			<img src={logo} alt="홈아이콘" class="w-10" />
+			<div>
+				<h1 class="text-xl font-semibold">아주대학교 공지모아</h1>
+				<div class="text-xs text-gray-500">최근 업데이트: {latestUpdateTime}</div>
+			</div>
 		</a>
         <a href="/mypage">
             <Icon icon="user" size={24} />
         </a>
-	</h1>
+	</div>
 	<!-- 필터 -->
     <header class="sticky top-16 bg-white {hideHeader ? 'hide-animation' : ''}">
 		<div
@@ -316,10 +322,11 @@
 		{/if}
 	</main>
     <footer class="bg-gray-100 p-4 text-xs text-gray-500 text-center">
-        최근 업데이트 시각: {latestUpdateTime}
-        <div>
-            10분마다 업데이트를 하고 있어요
-        </div>
+        <div class="text-sm">아주대학교 공지모아</div>
+		<div class="text-gray-500">
+			Contact
+			<span>admin@ajou.in</span>
+		</div>
     </footer>
 	<!-- <Nav currentPath="/news" /> -->
 {:else if noticeFilterPage == '일반공지'}

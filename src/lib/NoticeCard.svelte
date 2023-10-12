@@ -1,79 +1,102 @@
 <script>
-    import Icon from "$lib/Icon.svelte";
-    import { toastMessage, ACCESS_TOKEN } from '$lib/stores';
+	import Icon from '$lib/Icon.svelte';
+	import { toastMessage, ACCESS_TOKEN, myBookMark } from '$lib/stores';
 
-    async function toggleBookMark() {
-        if(!$ACCESS_TOKEN) {
-            toastMessage.set("로그인이 필요합니다.");
-            return;
-        }
-        const response = await fetch("/api/bookmark", {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json",
-                "Authorization": $ACCESS_TOKEN,
-            },
-            body: JSON.stringify({
-                noticeId: notice.id,
-            }),
-        });
-        if (response.ok) {
-            const data = await response.json();
-            if(data.isBookMarked) {
-                notice.isBookMarked = true;
-                toastMessage.set("북마크가 추가되었습니다.");
-            } else {
-                notice.isBookMarked = false;
-                toastMessage.set("북마크가 삭제되었습니다.");
-            }
-        } else {
-            if(response.status === 400) {
-                toastMessage.set("로그인이 필요합니다.");
-                return;
-            }
-        }
-    }
+	async function toggleBookMark() {
+		if (!$ACCESS_TOKEN) {
+			toastMessage.set('로그인이 필요합니다.');
+			return;
+		}
+		if (notice.isBookMarked) {
+			notice.isBookMarked = false;
+			$myBookMark = $myBookMark.filter((bookMark) => bookMark.id !== notice.id);
+		} else {
+			notice.isBookMarked = true;
+			$myBookMark = [...$myBookMark, notice];
+		}
+		const response = await fetch('/api/bookmark', {
+			method: 'POST',
+			headers: {
+				'Content-Type': 'application/json',
+				Authorization: $ACCESS_TOKEN
+			},
+			body: JSON.stringify({
+				noticeId: notice.id
+			})
+		});
+		if (response.ok) {
+			const data = await response.json();
+		} else {
+			if (response.status === 400) {
+				toastMessage.set('로그인이 필요합니다.');
+				return;
+			}
+		}
+	}
 
-    export let notice = {
-        id: "",
-        title: "",
-        date: "",
-        type: "",
-        link: "",
-        isTopFixed: false,
-        isBookMarked: false,
-    };
+	export let notice = {
+		id: '',
+		title: '',
+		date: '',
+		type: '',
+		link: '',
+		createdAt: 'asdf',
+		isTopFixed: false,
+		isBookMarked: false
+	};
+	function getTimeAgo(createdAt) {
+		const now = new Date();
+		const date = new Date(createdAt);
+
+		const diffInSeconds = Math.floor((now - date) / 1000);
+		const diffInMinutes = Math.floor(diffInSeconds / 60);
+		const diffInHours = Math.floor(diffInMinutes / 60);
+		const diffInDays = Math.floor(diffInHours / 24);
+		const diffInYears = now.getFullYear() - date.getFullYear();
+
+		if (diffInYears > 0) {
+			return `${date.getFullYear()}-${date.getMonth() + 1}-${date.getDate()}`;
+		}
+
+		if (diffInDays > 0) {
+			return `${date.getMonth() + 1}-${date.getDate()}`;
+		}
+
+		if (diffInHours > 0) {
+			return `${diffInHours}시간 전`;
+		}
+
+		if (diffInMinutes > 5) {
+			return `${diffInMinutes}분 전`;
+		}
+
+		return '방금 전';
+	}
 </script>
 
 <div class="px-4 py-2 flex items-center justify-between">
-    <a data-sveltekit-preload-data="eager" href={notice.link} target='_blank' class="block grow">
-        <h4 class="text-gray-700 font-medium text-sm whitespace-wrap">
-            {notice.title}
-        </h4>
-        <div class="flex gap-4 mt-2 text-xs text-gray-500">
-            <div class="flex items-center gap-2">
-                {notice.date.substring(0, 10)}
-                <!-- <div class="px-2 py-0.5 bg-green-200 rounded-full text-black">
-                    {notice.type}
-                </div> -->
-                {#if notice.isTopFixed}
-                    <div class="px-2 py-0.5 bg-yellow-200 rounded-full text-black">
-                        상단고정공지
-                    </div>
-                {/if}
-            </div>
-        </div>
-    </a>
-    <button on:click={toggleBookMark}
-    class="text-gray-500">
-    {#if notice.isBookMarked}
-        <div class="text-blue-500">
-            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="currentColor" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-bookmark"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"></path></svg>
-        </div>
-    {:else}
-        <div class="text-gray-500">
-            <Icon icon="bookmark" size={24} />
-        </div>
-    {/if}
-    </button>
+	<a href={notice.link} target="_blank" class="block grow">
+		<h4 class="text-gray-700 font-medium text-base whitespace-wrap">
+			{notice.title}
+		</h4>
+		<div class="flex gap-4 mt-2 text-sm text-gray-500">
+			<div class="flex items-center gap-2">
+				{getTimeAgo(notice.createdAt)}
+				{#if notice.isTopFixed}
+					<div class="px-2 py-0.5 bg-yellow-200 rounded-full text-black">상단고정공지</div>
+				{/if}
+			</div>
+		</div>
+	</a>
+	<button on:click={toggleBookMark} class="text-gray-500">
+		{#if notice.isBookMarked}
+			<div class="text-blue-500">
+				<Icon icon="bookmark-fill" size={24} />
+			</div>
+		{:else}
+			<div class="text-gray-500">
+				<Icon icon="bookmark" size={24} />
+			</div>
+		{/if}
+	</button>
 </div>
