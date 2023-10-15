@@ -1,5 +1,5 @@
 async function getResponse(request) {
-    const response = await fetch('http://222.251.154.231:8080/auth/email/request', {
+    const response = await fetch('http://222.251.154.231:8082/auth/email/request', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json'
