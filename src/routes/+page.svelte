@@ -445,7 +445,7 @@
 			</div>
 		</div>
 	</footer>
-	<div class="h-16" />
+	<!-- <div class="h-16" /> -->
 	<!-- <Nav currentPath="/news" /> -->
 {:else if noticeFilterPage == '일반공지'}
 	<h3 class="p-4">공지사항을 확인할 포탈을 선택하세요</h3>
