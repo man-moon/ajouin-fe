@@ -1,7 +1,7 @@
 async function getResponse(notices, accessToken) {
     let response;
     if(accessToken == '') {
-        response = await fetch('http://Ajou-community-env.eba-z2tgagdq.ap-northeast-2.elasticbeanstalk.com/notices', {
+        response = await fetch('http://222.251.154.231:8080/notices', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
@@ -9,7 +9,7 @@ async function getResponse(notices, accessToken) {
             body: JSON.stringify({ notices })
         });
     } else {
-        response = await fetch('http://Ajou-community-env.eba-z2tgagdq.ap-northeast-2.elasticbeanstalk.com/notices', {
+        response = await fetch('http://222.251.154.231:8080/notices', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
@@ -26,4 +26,16 @@ export async function POST({ request }) {
     const accessToken = await request.headers.get('Authorization');
 
     return await getResponse(notices, accessToken);
+}
+
+export async function GET({ url }) {
+    const type = url.searchParams.get('type');
+    const offset = url.searchParams.get('offset');
+    const response = await fetch(`http://222.251.154.231:8080/notices?type=${type}&offset=${offset}`, {
+        method: 'GET',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+    });
+    return response;
 }

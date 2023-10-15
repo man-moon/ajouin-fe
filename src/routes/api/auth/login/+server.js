@@ -1,5 +1,5 @@
 async function getResponse(request) {
-    const response = await fetch('http://Ajou-community-env.eba-z2tgagdq.ap-northeast-2.elasticbeanstalk.com/auth/login', {
+    const response = await fetch('http://222.251.154.231:8080/auth/login', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json'

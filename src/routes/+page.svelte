@@ -1,13 +1,11 @@
 <script>
 	import Icon from '$lib/Icon.svelte';
 	import NoticeCard from '$lib/NoticeCard.svelte';
-	import { onMount } from 'svelte';
+	import { onDestroy, onMount } from 'svelte';
 	import { browser } from '$app/environment';
 	import logo from '$lib/assets/logo.png';
 	import { ACCESS_TOKEN, toastMessage, myBookMark } from '$lib/stores';
-
-	let hideHeader = false;
-	let lastScrollPosition = 0;
+	// import Nav from '$lib/Nav.svelte';
 
 	let latestUpdateTime = '2023-10-10 00:00:00';
 	let fetchedNotices = [];
@@ -17,20 +15,117 @@
 	let selectedType = '';
 	$: fetchedTypes = [...new Set(fetchedNotices.map((n) => n.type))];
 
+	let offsetPerType = {
+		일반공지: 0,
+		장학공지: 0,
+		생활관: 0,
+		링크사업단: 0,
+		중앙도서관: 0,
+		공과대학: 0,
+		정보통신대학: 0,
+		소프트웨어융합대학: 0,
+		자연과학대학: 0,
+		경영대학: 0,
+		인문대학: 0,
+		사회과학대학: 0,
+		의과대학: 0,
+		간호대학: 0,
+		약학대학: 0,
+		기계공학과: 0,
+		산업공학과: 0,
+		응용화학생명공학과: 0,
+		화학공학과: 0,
+		첨단신소재공학과: 0,
+		환경안전공학과: 0,
+		건설시스템공학과: 0,
+		교통시스템공학과: 0,
+		건축학과: 0,
+		융합시스템공학과: 0,
+		AI모빌리티공학과: 0,
+		전자공학과: 0,
+		지능형반도체공학과: 0,
+		소프트웨어학과: 0,
+		인공지능융합학과: 0,
+		사이버보안학과: 0,
+		디지털미디어학과: 0,
+		국방디지털융합학과: 0,
+		수학과: 0,
+		물리학과: 0,
+		화학과: 0,
+		생명과학과: 0,
+		경영학과: 0,
+		e비즈니스학과: 0,
+		금융공학과: 0,
+		글로벌경영학과: 0,
+		국어국문학과: 0,
+		영어영문학과: 0,
+		불어불문학과: 0,
+		사학과: 0,
+		문화콘텐츠학과: 0,
+		경제학과: 0,
+		행정학과: 0,
+		심리학과: 0,
+		사회학과: 0,
+		정치외교학과: 0,
+		스포츠레저학과: 0
+	};
+
+	async function loadMore() {
+		offsetPerType[selectedType] += 10;
+		const response = await fetch(
+			`/api/notices?type=${selectedType}&offset=${offsetPerType[selectedType]}`,
+			{
+				method: 'GET',
+				headers: {
+					'Content-Type': 'application/json'
+				}
+			}
+		);
+		const data = await response.json();
+		let additionalNotices = data.notices;
+		additionalNotices = additionalNotices.map((n) => {
+			n.isBookMarked = $myBookMark.filter((b) => b.id == n.id).length > 0;
+			//showNotices의 가장 마지막 원소 id와 같다면 제거
+			if (showNotices.length > 0 && showNotices[showNotices.length - 1].id == n.id) {
+				showNotices.pop();
+			}
+			
+			return n;
+		});
+		//날짜 시간대 맞추기
+		additionalNotices = additionalNotices.map((n) => {
+			let date = new Date(n.date);
+			date.setHours(date.getHours() + 9);
+			n.date = date.toISOString();
+			return n;
+		});
+		//학과이름 숫자 제거
+		additionalNotices = additionalNotices.map((n) => {
+			n.type = n.type.replace(/[0-9]/g, '');
+			return n;
+		});
+		showNotices = [...showNotices, ...additionalNotices];
+	}
+
 	async function getNotices(init) {
 		//북마크 정보도 가져오기
 		const response = await fetch('/api/notices', {
 			method: 'POST',
 			headers: {
 				'Content-Type': 'application/json',
-				Authorization: $ACCESS_TOKEN || localStorage.getItem('accessToken')
-					? $ACCESS_TOKEN || localStorage.getItem('accessToken')
-					: ''
+				Authorization:
+					$ACCESS_TOKEN || localStorage.getItem('h5prc2wcOyaKvGNQZZKiS')
+						? $ACCESS_TOKEN || localStorage.getItem('h5prc2wcOyaKvGNQZZKiS')
+						: ''
 			},
 			body: JSON.stringify({
 				notices: init ? init : selectedTotalFilters
 			})
 		});
+		if (response.status == 400) {
+			localStorage.removeItem('h5prc2wcOyaKvGNQZZKiS');
+			return;
+		}
 		const data = await response.json();
 
 		fetchedNotices = data.notices;
@@ -41,7 +136,6 @@
 		});
 
 		const date = new Date(data.latestUpdateTime);
-		date.setHours(date.getHours() + 9);
 		const year = date.getFullYear();
 		const month = date.getMonth() + 1;
 		const day = date.getDate();
@@ -50,9 +144,6 @@
 
 		latestUpdateTime = `${year}년 ${month}월 ${day}일 ${hours}시 ${minutes}분`;
 
-		//북마크 정보 추가
-		//북마크는 List<SchoolNotice>형태로 되어있음
-		//SchoolNotice내에 id 정보가 있음
 		fetchedNotices = fetchedNotices.map((n) => {
 			n.isBookMarked = $myBookMark.filter((b) => b.id == n.id).length > 0;
 			return n;
@@ -76,7 +167,7 @@
 		}
 		if (browser) {
 			localStorage.setItem(
-				'cachedTypes',
+				'lugTcOmCFqTv9T35Detf',
 				JSON.stringify([...new Set(fetchedNotices.map((n) => n.type))])
 			);
 		}
@@ -84,6 +175,12 @@
 
 	$: {
 		showNotices = fetchedNotices.filter((n) => n.type == selectedType);
+		offsetPerType[selectedType] = 0;
+		if (typeof window !== 'undefined') {
+			window.scrollTo({
+				top: 0
+			});
+		}
 	}
 
 	//UNIV_NOTICE or STUDENT_COUNCIL_NOTICE
@@ -173,8 +270,35 @@
 
 	let showTopFixedNotices = false;
 
+	let hideHeader = false;
+	let lastScrollPosition = 0;
+	// 스크롤 애니메이션
+	const handleScroll = () => {
+		const currentScrollPosition = window.scrollY;
+
+		if (currentScrollPosition > lastScrollPosition && currentScrollPosition > 50) {
+			hideHeader = true;
+		} else {
+			hideHeader = false;
+		}
+
+		lastScrollPosition = currentScrollPosition;
+	};
+
+	let isLoadingMore = false;
+	const handleInfinityScroll = () => {
+		if (isLoadingMore) return;
+		const { scrollTop, clientHeight, scrollHeight } = document.documentElement;
+		if (scrollTop + clientHeight >= scrollHeight - 50) {
+			isLoadingMore = true;
+			loadMore().finally(() => {
+				isLoadingMore = false;
+			});
+		}
+	};
+
 	onMount(async () => {
-		let cachedTypes = localStorage.getItem('cachedTypes');
+		let cachedTypes = localStorage.getItem('lugTcOmCFqTv9T35Detf');
 		if (cachedTypes) {
 			cachedTypes = JSON.parse(cachedTypes);
 			selectedTotalFilters = cachedTypes;
@@ -199,23 +323,15 @@
 		} else {
 			await getNotices(['일반공지', '장학공지']);
 		}
-
-		// 스크롤 애니메이션
-		const handleScroll = () => {
-			const currentScrollPosition = window.scrollY;
-
-			if (currentScrollPosition > lastScrollPosition && currentScrollPosition > 50) {
-				hideHeader = true;
-			} else {
-				hideHeader = false;
-			}
-
-			lastScrollPosition = currentScrollPosition;
-		};
 		window.addEventListener('scroll', handleScroll);
-		return () => {
+		window.addEventListener('scroll', handleInfinityScroll);
+	});
+
+	onDestroy(() => {
+		if (typeof window !== 'undefined') {
 			window.removeEventListener('scroll', handleScroll);
-		};
+			window.removeEventListener('scroll', handleInfinityScroll);
+		}
 	});
 </script>
 
@@ -230,12 +346,12 @@
 				<div class="text-xs text-gray-500">최근 업데이트: {latestUpdateTime}</div>
 			</div>
 		</a>
-        <a href="/mypage">
-            <Icon icon="user" size={24} />
-        </a>
+		<a href="/mypage">
+			<Icon icon="user" size={24} />
+		</a>
 	</div>
 	<!-- 필터 -->
-    <header class="sticky top-16 bg-white {hideHeader ? 'hide-animation' : ''}">
+	<header class="sticky top-16 bg-white {hideHeader ? 'hide-animation' : ''}">
 		<div
 			class="w-full px-4 py-2 {fetchedTypes.length > 0
 				? 'border-b-0'
@@ -296,7 +412,7 @@
 				{/each}
 			</ul>
 		{/if}
-    </header>
+	</header>
 	<!-- 본문 -->
 	<main>
 		{#if showNotices.length > 0}
@@ -321,13 +437,15 @@
 			{/each}
 		{/if}
 	</main>
-    <footer class="bg-gray-100 p-4 text-xs text-gray-500 text-center">
-        <div class="text-sm">아주대학교 공지모아</div>
-		<div class="text-gray-500">
-			Contact
+	<footer class="bg-gray-100 p-4 text-xs text-gray-500 text-center">
+		<div class="text-sm">아주대학교 공지모아
+			<div class="text-gray-500">
+				Contact
 			<span>admin@ajou.in</span>
+			</div>
 		</div>
-    </footer>
+	</footer>
+	<div class="h-16" />
 	<!-- <Nav currentPath="/news" /> -->
 {:else if noticeFilterPage == '일반공지'}
 	<h3 class="p-4">공지사항을 확인할 포탈을 선택하세요</h3>
@@ -561,10 +679,9 @@
 	</div>
 {/if}
 
-
 <style>
 	header {
-        transition: transform 0.3s ease-in-out;
+		transition: transform 0.3s ease-in-out;
 	}
 	.hide-animation {
 		transform: translateY(-100%);

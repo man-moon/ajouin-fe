@@ -1,5 +1,5 @@
 async function getResponse(accessToken) {
-    const response = await fetch('http://Ajou-community-env.eba-z2tgagdq.ap-northeast-2.elasticbeanstalk.com/auth/withdrawal', {
+    const response = await fetch('http://222.251.154.231:8080/auth/withdrawal', {
             method: 'DELETE',
             headers: {
                 'Content-Type': 'application/json',

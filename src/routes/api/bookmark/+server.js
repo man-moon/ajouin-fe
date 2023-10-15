@@ -1,5 +1,5 @@
 async function getResponse(noticeId, accessToken) {
-    const response = await fetch('http://Ajou-community-env.eba-z2tgagdq.ap-northeast-2.elasticbeanstalk.com/bookmark', {
+    const response = await fetch('http://222.251.154.231:8080/bookmark', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
@@ -20,7 +20,7 @@ export async function POST({ request }) {
 
 export async function GET({ request }) {
     const accessToken = await request.headers.get('Authorization');
-    const response = await fetch('http://Ajou-community-env.eba-z2tgagdq.ap-northeast-2.elasticbeanstalk.com/bookmark', {
+    const response = await fetch('http://222.251.154.231:8080/bookmark', {
         method: 'GET',
         headers: {
             'Content-Type': 'application/json',

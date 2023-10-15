@@ -8,7 +8,7 @@
 	import { inject } from '@vercel/analytics';
 
 	onMount(()=>{
-		const accessToken = localStorage.getItem('accessToken')
+		const accessToken = localStorage.getItem('h5prc2wcOyaKvGNQZZKiS')
 		if(accessToken) {
 			$ACCESS_TOKEN = accessToken;
 		}

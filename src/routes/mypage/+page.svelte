@@ -9,11 +9,11 @@
 
 	let email = '';
 	let showLoading = true;
-	let isWithdrawaling = false;
+	let step = 'main';
 
 	onMount(async () => {
 		showLoading = true;
-		const accessToken = $ACCESS_TOKEN || localStorage.getItem('accessToken');
+		const accessToken = $ACCESS_TOKEN || localStorage.getItem('h5prc2wcOyaKvGNQZZKiS');
 		if (accessToken) {
 			$ACCESS_TOKEN = accessToken;
 			if ($myBookMark.length == 0) {
@@ -59,10 +59,34 @@
 			}
 		});
 		if (response.ok) {
-			localStorage.removeItem('accessToken');
+			localStorage.removeItem('h5prc2wcOyaKvGNQZZKiS');
 			$ACCESS_TOKEN = null;
-			toastMessage.set('회원탈퇴가 완료되었어요. 그동안 이용해주셔서 감사합니다.');
+			toastMessage.set('회원탈퇴가 완료되었어요.');
 			goto('/login');
+		} else {
+			response.json().then((data) => {
+				toastMessage.set(data.message);
+			});
+		}
+	}
+
+	let contactClassification;
+	let content = '';
+	async function contact() {
+		const response = await fetch('/api/contact', {
+			method: 'POST',
+			headers: {
+				'Content-Type': 'application/json',
+				Authorization: $ACCESS_TOKEN
+			},
+			body: JSON.stringify({
+				classification: contactClassification,
+				content: content
+			})
+		});
+		if (response.ok) {
+			toastMessage.set('문의가 접수되었어요.');
+			step = 'main';
 		} else {
 			response.json().then((data) => {
 				toastMessage.set(data.message);
@@ -105,7 +129,7 @@
 			</button>
 		</div>
 	{:else}
-		{#if isWithdrawaling}
+		{#if step == 'withdrawal'}
 		<h3 class="pt-4 px-4">
 			정말로 회원탈퇴를 하시겠어요?
 		</h3>
@@ -114,13 +138,36 @@
 			북마크 목록도 함께 삭제되니, 주의해주세요.
 		</div>
 		<div class="fixed bottom-0 max-w-4xl w-full flex text-lg">
-			<button on:click={()=>{isWithdrawaling = false}} class="block w-1/3 py-4 bg-gray-100">
+			<button on:click={()=>{step = 'main'}} class="block w-1/3 py-4 bg-gray-100">
 				취소할게요
 			</button>
 			<button on:click={withdrawal} class="block w-2/3 bg-blue-500 text-white py-4">
 				탈퇴할게요
 			</button>
 		</div>
+		{:else if step == 'contact'}
+		<form on:submit={contact}>
+			<h3 class="p-4">문의하기</h3>
+
+			<section class="mt-4 px-4">
+				<h4>분류</h4>
+				<select bind:value={contactClassification} class="relative mt-2 w-full h-12 px-4 py-2 border border-gray-300 rounded-lg">
+					<option>건의</option>
+					<option>버그</option>
+					<option>기타</option>
+				</select>
+			</section>
+
+			<section class="mt-8 px-4">
+				<h4>내용</h4>
+				<textarea bind:value={content} class="mt-2 block w-full h-48 px-4 py-2 border border-gray-300 rounded-lg" />
+				<div class="text-right text-gray-500">({content.length}/1000)</div>
+			</section>
+
+			<button type="submit" disabled={content.length <= 0} class="{content.length > 0 ? 'bg-blue-500' : 'bg-gray-300'} block text-white py-4 text-lg w-full fixed bottom-0 w-full max-w-4xl">
+				문의하기
+			</button>
+		</form>
 		{:else}
 		<!-- 즐겨찾기 한 학교 소식 -->
 			<div class="flex items-center justify-between p-4">
@@ -139,15 +186,17 @@
 
 			<hr class="h-2 bg-gray-50" />
 
-			<a href="#" class="p-4 flex items-center justify-between text-gray-700">
+			<button on:click={() => {
+				step = 'contact';
+			}} class="p-4 flex items-center justify-between text-gray-700 block w-full">
 				문의하기
 				<div class="text-gray-500">
 					<Icon icon="chevron-right" size={24} />
 				</div>
-			</a>
+			</button>
 			<button
 				on:click={() => {
-					localStorage.removeItem('accessToken');
+					localStorage.removeItem('h5prc2wcOyaKvGNQZZKiS');
 					$ACCESS_TOKEN = null;
 					toastMessage.set('로그아웃 되었어요');
 					goto('/login');
@@ -161,7 +210,7 @@
 			</button>
 			<button
 				on:click={() => {
-					isWithdrawaling = true;
+					step = 'withdrawal';
 				}}
 				class="p-4 flex items-center justify-between text-gray-700 block w-full"
 			>

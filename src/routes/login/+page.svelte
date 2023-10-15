@@ -5,7 +5,7 @@
     import Icon from "$lib/Icon.svelte";
 
     onMount(async () => {
-        const accessToken = localStorage.getItem('accessToken');
+        const accessToken = localStorage.getItem('h5prc2wcOyaKvGNQZZKiS');
         if(accessToken) {
             $ACCESS_TOKEN = accessToken;
             toastMessage.set("이미 로그인 되어있습니다.");
@@ -31,7 +31,7 @@
         if(response.ok) {
             const accessToken = response.headers.get('Authorization');
             if(accessToken) {
-                localStorage.setItem('accessToken', accessToken);
+                localStorage.setItem('h5prc2wcOyaKvGNQZZKiS', accessToken);
                 $ACCESS_TOKEN = accessToken;
                 goto('/');
             }
