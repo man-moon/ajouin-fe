@@ -25,6 +25,7 @@
 		content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"
 	/>
 	<meta name="google-site-verification" content="ScdjlAdeP35cHRtM5BFG0wK8bYi7xSJxwivMF0fexPg" />
+	<link rel="icon" href="/favicon.png">
 </svelte:head>
 
 <div class="w-full bg-gray-50 flex justify-center min-h-screen">
