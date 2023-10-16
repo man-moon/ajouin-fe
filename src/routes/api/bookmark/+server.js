@@ -1,5 +1,5 @@
 async function getResponse(noticeId, accessToken) {
-    const response = await fetch('http://222.251.154.231:8082/bookmark', {
+    const response = await fetch('http://localhost:8082/bookmark', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
@@ -20,7 +20,7 @@ export async function POST({ request }) {
 
 export async function GET({ request }) {
     const accessToken = await request.headers.get('Authorization');
-    const response = await fetch('http://222.251.154.231:8082/bookmark', {
+    const response = await fetch('http://localhost:8082/bookmark', {
         method: 'GET',
         headers: {
             'Content-Type': 'application/json',

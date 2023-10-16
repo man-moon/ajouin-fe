@@ -5,7 +5,7 @@
 	import { browser } from '$app/environment';
 	import logo from '$lib/assets/logo.png';
 	import { ACCESS_TOKEN, toastMessage, myBookMark } from '$lib/stores';
-	// import Nav from '$lib/Nav.svelte';
+	import Nav from '$lib/Nav.svelte';
 
 	let latestUpdateTime = '2023-10-10 00:00:00';
 	let fetchedNotices = [];
@@ -446,7 +446,7 @@
 		</div>
 	</footer>
 	<!-- <div class="h-16" /> -->
-	<!-- <Nav currentPath="/news" /> -->
+	<Nav currentPath="/" />
 {:else if noticeFilterPage == '일반공지'}
 	<h3 class="p-4">공지사항을 확인할 포탈을 선택하세요</h3>
 	<ul class="p-4 flex flex-wrap items-center text-center">

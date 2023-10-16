@@ -180,6 +180,9 @@
 
 <!-- step 0: 이메일 인증 -->
 <BackAppbar title="회원가입" />
+
+
+
 {#if step == 0}
 <main class="m-4">
     <h3>
