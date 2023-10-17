@@ -71,7 +71,7 @@
 	};
 
 	async function loadMore() {
-		offsetPerType[selectedType] += 10;
+		offsetPerType[selectedType] += 20;
 		const response = await fetch(
 			`/api/notices?type=${selectedType}&offset=${offsetPerType[selectedType]}`,
 			{
