@@ -1,6 +1,5 @@
 <script>
 	import '../app.css';
-	import background from '$lib/assets/background.jpg';
 	import Toast from "$lib/Toast.svelte";
 	import { page } from '$app/stores';
 	import { currentPath, ACCESS_TOKEN } from '$lib/stores';
