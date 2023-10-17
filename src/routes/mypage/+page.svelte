@@ -119,14 +119,14 @@
 				<Icon icon="alert-circle" size={64} />
 				<div class="mt-4">로그인이 필요한 서비스에요</div>
 			</div>
-			<button
-				on:click={() => {
-					goto('/login');
-				}}
-				class="mt-12 bg-blue-500 text-white py-3 text-lg w-full rounded-lg"
+			<div class="flex justify-center">
+				<a href="/login"
+				class="block text-center mt-12 text-gray-500 border-b border-gray-500 text-lg flex items-center justify-center"
 			>
 				로그인 하러가기
-			</button>
+				<Icon icon="chevron-right" size={18} />
+			</a>
+			</div>
 		</div>
 	{:else}
 		{#if step == 'withdrawal'}
@@ -175,14 +175,18 @@
 					<div class="text-gray-700">북마크 목록</div>
 				</h3>
 			</div>
-			<div class="pb-4">
-				{#each $myBookMark as bookMark, idx}
+			{#each $myBookMark as bookMark, idx}
+				{#if idx < 5}
 					<NoticeCard notice={bookMark} />
-					{#if idx != $myBookMark.length - 1}
+					{#if idx != 4 && idx != $myBookMark.length - 1}
 						<hr />
 					{/if}
-				{/each}
-			</div>
+				{/if}
+			{/each}
+			<a href="/mypage/bookmark" class="block text-sm text-gray-500 py-4 flex items-center justify-center w-full">
+				더보기
+				<Icon icon="chevron-right" size={16} />
+			</a>
 
 			<hr class="h-2 bg-gray-50" />
 

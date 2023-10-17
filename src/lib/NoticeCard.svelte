@@ -1,6 +1,7 @@
 <script>
 	import Icon from '$lib/Icon.svelte';
 	import { toastMessage, ACCESS_TOKEN, myBookMark } from '$lib/stores';
+	import { onMount } from 'svelte';
 
 	async function toggleBookMark() {
 		if (!$ACCESS_TOKEN) {
@@ -55,11 +56,11 @@
 		const diffInYears = now.getFullYear() - date.getFullYear();
 
 		if (diffInYears > 0) {
-			return `${date.getFullYear()}-${date.getMonth() + 1}-${date.getDate()}`;
+			return;
 		}
 
 		if (diffInDays > 0) {
-			return `${date.getMonth() + 1}-${date.getDate()}`;
+			return;
 		}
 
 		if (diffInHours > 0) {
@@ -75,31 +76,37 @@
 </script>
 
 <div class="px-4 py-2 flex items-center justify-between">
-	<button on:click={()=>{
-		fetch('/api/views', {
-			method: 'POST',
-			headers: {
-				'Content-Type': 'application/json',
-			},
-			body: JSON.stringify({
-				noticeId: notice.id
-			})
-		});
-		window.open(notice.link, '_blank');
-	}} class="block grow">
-		<h4 class="text-gray-700 font-medium text-base text-left whitespace-wrap flex items-center">
+	<button
+		on:click={() => {
+			fetch('/api/views', {
+				method: 'POST',
+				headers: {
+					'Content-Type': 'application/json'
+				},
+				body: JSON.stringify({
+					noticeId: notice.id
+				})
+			});
+			window.open(notice.link, '_blank');
+		}}
+		class="block grow"
+	>
+		<h4 class="text-gray-700 font-normal text-base text-left whitespace-wrap flex items-center">
 			{#if notice.isTopFixed}📌{/if}
 			{notice.title}
 		</h4>
-		<div class="flex gap-2 items-center mt-2 text-sm text-gray-500">
-			<div>{getTimeAgo(notice.createdAt)}</div>
-			<div class="ml-2 flex items-center gap-1">
+		<div class="flex gap-4 items-center mt-2 text-sm text-gray-500">
+			{#if getTimeAgo(notice.createdAt)}
+				<div>{getTimeAgo(notice.createdAt)}</div>
+			{:else}
+				<div class="flex items-center gap-1">
+					<Icon icon="calendar" size={12} />
+					{notice.date.slice(0, 10)}
+				</div>
+			{/if}
+			<div class="flex items-center gap-1">
 				<Icon icon="eye" size={12} />
 				{notice.views}
-			</div>
-			<div class="ml-2 flex items-center gap-1">
-				<Icon icon="calendar" size={12} />
-				{notice.date.slice(0, 10)}
 			</div>
 		</div>
 	</button>

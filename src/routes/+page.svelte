@@ -71,7 +71,7 @@
 	};
 
 	async function loadMore() {
-		offsetPerType[selectedType] += 10;
+		offsetPerType[selectedType] += 20;
 		const response = await fetch(
 			`/api/notices?type=${selectedType}&offset=${offsetPerType[selectedType]}`,
 			{
@@ -122,8 +122,10 @@
 				notices: init ? init : selectedTotalFilters
 			})
 		});
-		if (response.status == 400) {
+		if (!response.ok) {
 			localStorage.removeItem('h5prc2wcOyaKvGNQZZKiS');
+			toastMessage.set('로그인이 필요합니다.');
+			location.reload();
 			return;
 		}
 		const data = await response.json();
@@ -289,7 +291,11 @@
 	const handleInfinityScroll = () => {
 		if (isLoadingMore) return;
 		const { scrollTop, clientHeight, scrollHeight } = document.documentElement;
-		if (scrollTop + clientHeight >= scrollHeight - 50) {
+		console.log("스크롤 탑 + 클라이언트 높이: ", scrollTop + clientHeight);
+		console.log("스크롤 높이 - 50: ", scrollHeight - 100);
+		if (scrollTop + clientHeight >= scrollHeight - 100) {
+			console.log("인피니티 스크롤");
+			console.log(scrollTop, clientHeight, scrollHeight);
 			isLoadingMore = true;
 			loadMore().finally(() => {
 				isLoadingMore = false;
@@ -342,12 +348,17 @@
 		<a href="/" class="flex items-center gap-4">
 			<img src={logo} alt="홈아이콘" class="w-10" />
 			<div>
-				<h1 class="text-xl font-semibold">아주대학교 공지모아</h1>
-				<div class="text-xs text-gray-500">최근 업데이트: {latestUpdateTime}</div>
+				<h1 class="text-xl font-semibold">아주대학교 공지</h1>
+				<div class="text-xs text-gray-500 flex items-center gap-1">
+					업데이트: {latestUpdateTime}
+					<button on:click={() => {
+						const cachedTypes = localStorage.getItem('lugTcOmCFqTv9T35Detf');
+						getNotices(cachedTypes)
+					}}>
+						<Icon icon="refresh-cw" size={10} />
+					</button>
+				</div>
 			</div>
-		</a>
-		<a href="/mypage">
-			<Icon icon="user" size={24} />
 		</a>
 	</div>
 	<!-- 필터 -->
@@ -437,7 +448,7 @@
 			{/each}
 		{/if}
 	</main>
-	<footer class="bg-gray-100 p-4 text-xs text-gray-500 text-center">
+	<footer class="mb-16 bg-gray-100 p-4 text-xs text-gray-500 text-center">
 		<div class="text-sm">아주대학교 공지모아
 			<div class="text-gray-500">
 				Contact
