@@ -2,6 +2,7 @@
 	import BackAppbar from "$lib/BackAppbar.svelte";
     import Icon from "$lib/Icon.svelte";
     import { onMount, tick } from 'svelte';
+    import Abot from "$lib/assets/Abot.png";
 
     let scrollElement;
 
@@ -70,10 +71,10 @@
         {:else}
             <li class="flex gap-2 {i == messages.length - 1 ? 'last-message' : ''}">
                 <div>
-                    <div class="bg-blue-200 rounded-full w-10 h-10" />
+                    <img src={Abot} alt="ajou-bot" class="rounded-full w-10 h-10 border" />
                 </div>
                 <div class="">
-                    <div class="text-gray-700">챗봇</div>
+                    <div class="text-gray-700">아주챗봇</div>
                     <div class="max-w-sm mt-1 break-words shadow-md bg-blue-500 text-white rounded-lg rounded-tl-none p-2">
                         {message.content}
                         <!-- {#if message.link}

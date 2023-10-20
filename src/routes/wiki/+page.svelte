@@ -261,6 +261,14 @@
 		<div bind:this={element} />
 	</div>
 
+	<div class="px-4 flex items-center justify-center">
+		<button on:click={() => goto('/wiki/아주위키:작성')}
+			class="block px-4 text-blue-500 text-lg border border-blue-500 py-3 rounded-lg">
+			나도 기여해보기!
+		</button>
+	</div>
+
+
 	<!-- 리더보드 -->
 	<h3 class="px-4">리더보드</h3>
 	<div class="relative border rounded-lg p-4 m-4">
@@ -288,8 +296,13 @@
 	</div>
 
 	<!-- 카테고리 목록 -->
-	<h3 class="px-4 pt-4">카테고리</h3>
-	<p class="px-4 text-red-500">카테고리 ui는 아직 고민중<br />더 재미있게 표현할 수 있는 방법?</p>
+	<div class="px-4 pt-4 flex justify-between items-center">
+		<h3>카테고리</h3>
+		<a href="/wiki/아주위키:카테고리" class="text-gray-700 flex items-center">
+			모든 카테고리 보기
+			<Icon icon="chevron-right" size={16}/>
+		</a>
+	</div>
 	<div class="mx-4 rounded-lg border border-gray-300">
 		<table class="w-full border-none text-gray-700">
 			<tbody>
@@ -341,18 +354,25 @@
 		  </table>
 	</div>
 
-
-	<!-- 최근 가장 많이 검색된 문서 -->
+<!-- 
+	최근 가장 많이 검색된 문서
 	<h3 class="px-4 pt-8">최근 가장 많이 검색된 문서</h3>
 	<ul class="mt-4">
 		{#each '012' as i}
 			<DocumentCard />
 			<hr class="my-2" />
 		{/each}
-	</ul>
+	</ul> -->
 
 	<!-- 최근 수정/등록된 문서 -->
-	<h3 class="px-4 pt-4">최근 수정/등록된 문서</h3>
+	<div class="flex items-center justify-between px-4 mt-8">
+		<h3>최근 편집된 문서</h3>
+		<a href="/wiki/아주위키:문서" class="text-gray-700 flex items-center">
+			모든 문서 보기
+			<Icon icon="chevron-right" size={16}/>
+		</a>
+	</div>
+
 	<ul class="mt-4">
 		{#each '012' as i}
 			<DocumentCard />

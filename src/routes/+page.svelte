@@ -6,6 +6,7 @@
 	import logo from '$lib/assets/logo.png';
 	import { ACCESS_TOKEN, toastMessage, myBookMark } from '$lib/stores';
 	import Nav from '$lib/Nav.svelte';
+	import Appbar from '$lib/Appbar.svelte';
 
 	let latestUpdateTime = '2023-10-10 00:00:00';
 	let fetchedNotices = [];
@@ -449,7 +450,7 @@
 		{/if}
 	</main>
 	<footer class="mb-16 bg-gray-100 p-4 text-xs text-gray-500 text-center">
-		<div class="text-sm">아주대학교 공지모아
+		<div class="text-sm">아주인
 			<div class="text-gray-500">
 				Contact
 			<span>admin@ajou.in</span>

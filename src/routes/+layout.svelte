@@ -29,8 +29,12 @@
 </svelte:head>
 
 <div id=main class="w-full bg-gray-50 flex justify-center min-h-screen bg-cover bg-fixed">
+<!-- <div id=main class="w-full sm:pl-48 bg-gray-50 flex min-h-screen bg-cover bg-fixed"> -->
 	<div class="max-w-4xl w-full bg-white">
 		<slot />
 	</div>
+	<!-- <div class="flex justify-center ">
+		
+	</div> -->
 </div>
 <Toast />

@@ -15,11 +15,13 @@
 		"@sveltejs/kit": "^1.20.4",
 		"@types/d3": "^7.4.1",
 		"@types/d3-force": "^3.0.6",
+		"@types/dompurify": "^3.0.4",
 		"@zerodevx/svelte-toast": "^0.9.5",
 		"autoprefixer": "^10.4.15",
 		"postcss": "^8.4.29",
 		"prettier": "^2.8.0",
 		"prettier-plugin-svelte": "^2.10.1",
+		"rollup-plugin-copy": "^3.5.0",
 		"svelte": "^4.0.5",
 		"svelte-carousel": "^1.0.25",
 		"svelte-sitemap": "^2.6.0",
@@ -28,8 +30,13 @@
 	},
 	"type": "module",
 	"dependencies": {
+		"@tinymce/tinymce-svelte": "^1.0.1",
 		"@vercel/analytics": "^1.1.0",
 		"d3": "^7.8.5",
-		"feather-icons": "^4.29.1"
+		"dompurify": "^3.0.6",
+		"feather-icons": "^4.29.1",
+		"isomorphic-dompurify": "^1.9.0",
+		"suneditor": "^2.45.1",
+		"tinymce": "^6.7.0"
 	}
 }

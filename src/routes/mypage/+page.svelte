@@ -115,16 +115,16 @@
 		</div>
 	{:else if $ACCESS_TOKEN == null}
 		<div class="p-4">
-			<div class="mt-12 text-lg flex flex-col items-center text-gray-500">
+			<div class="mt-24 text-lg flex flex-col items-center text-gray-500">
 				<Icon icon="alert-circle" size={64} />
-				<div class="mt-4">로그인이 필요한 서비스에요</div>
+				<div class="mt-20">로그인이 필요한 서비스에요</div>
 			</div>
 			<div class="flex justify-center">
 				<a href="/login"
-				class="block text-center mt-12 text-gray-500 border-b border-gray-500 text-lg flex items-center justify-center"
+				class="block text-center text-gray-500 border-b border-gray-500 mt-2 text-sm flex items-center justify-center"
 			>
 				로그인 하러가기
-				<Icon icon="chevron-right" size={18} />
+				<Icon icon="chevron-right" size={16} />
 			</a>
 			</div>
 		</div>
