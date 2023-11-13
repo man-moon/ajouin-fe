@@ -1,9 +1,9 @@
 <script>
     import Icon from "./Icon.svelte";
     const nav = [
-        { title: "학교 소식", path: "/news", icon: "send" },
+        { title: "학교 소식", path: "/", icon: "send" },
         { title: "게시판", path: "/board", icon: "columns" },
-        { title: "위키", path: "/", icon: "git-branch" },
+        { title: "위키", path: "/wiki", icon: "git-branch" },
         { title: "챗봇", path: "/chat", icon: "message-circle" },
         { title: "마이페이지", path: "/mypage", icon: "user" },
     ];

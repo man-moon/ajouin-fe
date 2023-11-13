@@ -6,8 +6,8 @@
 	import { goto } from '$app/navigation';
 	import logo from '$lib/assets/logo.png';
 
-	const tags = ['전체글', '#HOT', '#아무말', '#홍보', '#취업', '#연애', '#술', '#유머', '#패션', '#헬스'];
-	let selectedTag = "전체글";
+	const tags = ['#HOT', '전체글', '#아무말', '#홍보', '#취업', '#연애', '#술', '#유머', '#패션', '#헬스'];
+	let selectedTag = "#HOT";
 	let hideHeader = false;
 	let lastScrollPosition = 0;
 

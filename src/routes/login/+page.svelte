@@ -1,27 +1,37 @@
 <script>
     import { goto } from "$app/navigation";
-    import { toastMessage, API_BASE_URL, ACCESS_TOKEN } from '$lib/stores';
+    import { toastMessage, ACCESS_TOKEN } from '$lib/stores';
+    import { onMount } from "svelte";
+    import Icon from "$lib/Icon.svelte";
+
+    onMount(async () => {
+        const accessToken = localStorage.getItem('h5prc2wcOyaKvGNQZZKiS');
+        if(accessToken) {
+            $ACCESS_TOKEN = accessToken;
+            toastMessage.set("이미 로그인 되어있습니다.");
+            goto('/');
+        }
+    });
 
     let email = "";
     let password = "";
 
     async function login() {
-        console.log("login")
-        const response = await fetch(`${API_BASE_URL}/auth/login`, {
+        const response = await fetch('api/auth/login', {
 			method: 'POST',
             headers: {
 				'Content-Type': 'application/json'
 			},
 			body: JSON.stringify({
-                "email": {"value": email + "@ajou.ac.kr"},
-                "password": password
+                email: {value: email + "@ajou.ac.kr"},
+                password: password
             })
 		});
 
         if(response.ok) {
             const accessToken = response.headers.get('Authorization');
             if(accessToken) {
-                localStorage.setItem('accessToken', accessToken);
+                localStorage.setItem('h5prc2wcOyaKvGNQZZKiS', accessToken);
                 $ACCESS_TOKEN = accessToken;
                 goto('/');
             }
@@ -35,13 +45,17 @@
 </script>
 
 <header class="mt-32 flex flex-col items-center justify-center">
-    <h1 class="flex text-blue-500 text-2xl font-extrabold">
+    <h1 class="flex text-blue-500 text-3xl font-extrabold">
         아주인
     </h1>
-    <div class="text-gray-500 mt-2">아주대학교 대표 커뮤니티</div>
+    <div class="font-bold text-gray-400">아주대학교 커뮤니티</div>
+    <a href="/" class="border-b border-gray-700 flex items-center text-gray-500 mt-2 text-center text-sm">
+        둘러보기
+        <Icon icon={"chevron-right"} size={18} />
+    </a>
 </header>
 
-<main class="mt-12 px-4 md:px-12">
+<form on:submit|preventDefault={login} class="mt-12 px-4 md:px-48">
     <label class="relative flex">
         <input bind:value={email} type="text" placeholder="이메일" class="w-full h-12 px-4 py-2 border border-gray-300 rounded-lg" />
         <div class="absolute top-3 right-4 text-gray-400">@ajou.ac.kr</div>
@@ -49,20 +63,20 @@
     <input bind:value={password} type="password" placeholder="비밀번호" class="mt-2 w-full h-12 px-4 py-2 border border-gray-300 rounded-lg" />
 
     <div class="mt-4 w-full">
-        <button on:click={login} class="bg-blue-500 text-white py-3 text-lg w-full rounded-lg">
+        <button type="submit" class="bg-blue-500 text-white py-3 text-lg w-full rounded-lg">
             로그인
         </button>
     </div>
 
-    <a href="#">
+    <a href="/resetpassword">
         <div class="text-sm mt-4 w-full text-center text-gray-500 underline underline-offset-4">
             비밀번호를 잊으셨나요?
         </div>
     </a>
 
     <div class="mt-24 w-full">
-        <button on:click={()=>{goto("/signup")}} class="text-blue-500 border border-blue-500 bg-white py-3 text-lg w-full rounded-lg">
+        <button type="button" on:click={()=>{goto("/signup")}} class="text-blue-500 border border-blue-500 bg-white py-3 text-lg w-full rounded-lg">
             학교 이메일로 회원가입
         </button>
     </div>
-</main>
+</form>

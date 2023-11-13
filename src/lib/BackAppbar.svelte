@@ -1,11 +1,9 @@
 <script>
-  import { goto } from '$app/navigation';
   export let title = "TEXT";
-  export let path = "../";
 </script>
 
-<div class="relative sticky top-0 bg-white h-14 items-center border-b flex">
-    <button on:click={()=>{goto(path)}} class="absolute p-4">
+<div class="relative sticky top-0 bg-white h-14 items-center border-b flex z-20">
+    <button on:click={()=>{history.back()}} class="absolute p-4">
       <svg
         xmlns="http://www.w3.org/2000/svg"
         width="24"

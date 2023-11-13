@@ -6,6 +6,12 @@ export default {
       maxWidth: {
         'xxs': '16rem',
       },
+      height: {
+        '120': '34rem',
+      },
+      width: {
+        '112': '28rem',
+      }
     }
   },
   plugins: [],

@@ -11,11 +11,11 @@
     export let hashTag = "#홍보";
 </script>
 
-<a href="#post" class="block px-4">
+<a href="/board/1" class="block px-4">
     <h4 class="text-gray-600 truncate text-lg font-semibold">
         {truncate(heading,20)}
     </h4>
-    <div class="flex gap-4 mt-2 text-sm text-gray-500">
+    <div class="flex gap-4 mt-2 text-sm text-gray-500 justify-between">
         <!-- 사진 -->
         <div class="w-4/5">
             {truncate(content, 80)}
