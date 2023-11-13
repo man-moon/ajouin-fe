@@ -12,7 +12,17 @@
 	let width = 450;
 	let element;
 
-	onMount(async function () {
+	let categories = [];
+	function chunkArray(array, chunkSize) {
+		let results = [];
+		while (array.length) {
+		results.push(array.splice(0, chunkSize));
+		}
+		return results;
+	}
+	let groupedCategories;
+	$: groupedCategories = chunkArray([...categories], 3);
+	onMount(async () => {
 		let data = wikidata;
 
 		let chart = ForceGraph(data, {
@@ -25,13 +35,20 @@
 		});
 
 		d3.select(element).append(() => chart);
-		// Or alternatively, via the native DOM API:
-		// element.appendChild(chart)
+
+		const response = await fetch('/api/wiki/category', {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+        });
+        if (response.ok) {
+            categories = await response.json();
+        } else {
+            toastMessage.set("카테고리 목록을 불러오는데 실패했어요.")
+        }
 	});
 
-	// Copyright 2021 Observable, Inc.
-	// Released under the ISC license.
-	// https://observablehq.com/@d3/force-directed-graph
 	function ForceGraph(
 		{
 			nodes, // an iterable of node objects (typically [{id}, …])
@@ -203,7 +220,27 @@
 		}
 	];
 
-	onMount(() => {
+	let docs = [];
+
+	onMount(async() => {
+		//모든 문서 가져오기
+		const response = await fetch('/api/wiki/doc_list', {
+			method: 'GET',
+			headers: {
+				'Content-Type': 'application/json',
+			},
+		});
+		if (response.ok) {
+			const data = await response.json();
+			docs = data.documents;
+			docs = docs.map((n) => {
+				let date = new Date(n.createdAt);
+				date.setHours(date.getHours() + 9);
+				n.createdAt = date.toISOString();
+				return n;
+			});
+		}
+
 		const handleScroll = () => {
 			const currentScrollPosition = window.scrollY;
 
@@ -263,14 +300,14 @@
 
 	<div class="px-4 flex items-center justify-center">
 		<button on:click={() => goto('/wiki/아주위키:작성')}
-			class="block px-4 text-blue-500 text-lg border border-blue-500 py-3 rounded-lg">
-			나도 기여해보기!
+			class="block px-4 text-blue-500 border border-blue-500 py-3 rounded-lg">
+			위키 작성하기
 		</button>
 	</div>
 
 
 	<!-- 리더보드 -->
-	<h3 class="px-4">리더보드</h3>
+	<!-- <h3 class="px-4">리더보드</h3>
 	<div class="relative border rounded-lg p-4 m-4">
 		<div class="absolute left-4 -top-2.5 text-gray-500 text-sm font-normal bg-white px-1">
 			이번 주 아주위키 기여도 TOP 10
@@ -293,10 +330,10 @@
 				</div>
 			{/each}
 		</div>
-	</div>
+	</div> -->
 
 	<!-- 카테고리 목록 -->
-	<div class="px-4 pt-4 flex justify-between items-center">
+	<div class="px-4 pt-12 flex justify-between items-center">
 		<h3>카테고리</h3>
 		<a href="/wiki/아주위키:카테고리" class="text-gray-700 flex items-center">
 			모든 카테고리 보기
@@ -306,51 +343,16 @@
 	<div class="mx-4 rounded-lg border border-gray-300">
 		<table class="w-full border-none text-gray-700">
 			<tbody>
-			  <tr>
-				<td class="w-1/3 py-2 px-4 border-b">
-					<a href="/wiki/동아리">동아리</a>
-				</td>
-				<td class="w-1/3 py-2 px-4 border-b border-l">
-					<a href="/wiki/맛집">맛집</a>
-				</td>
-				<td class="w-1/3 py-2 px-4 border-b border-l">
-					<a href="/wiki/수업">수업</a>
-				</td>
-			  </tr>
-			  <tr>
-				<td class="py-2 px-4 border-b">
-					<a href="/wiki/행사">행사</a>
-				</td>
-				<td class="py-2 px-4 border-b border-l">
-					<a href="/wiki/건물">건물</a>
-				</td>
-				<td class="py-2 px-4 border-b border-l">
-					<a href="/wiki/교수">교수진</a>
-				</td>
-			  </tr>
-			  <tr>
-				<td class="py-2 px-4 border-b">
-					<a href="/wiki/단과대">단과대</a>
-				</td>
-				<td class="py-2 px-4 border-b border-l">
-					<a href="/wiki/학과">학과</a>
-				</td>
-				<td class="py-2 px-4 border-b border-l">
-					<a href="/wiki/카페">카페</a>
-				</td>
-			  </tr>
-			  <tr>
-				<td class="py-2 px-4">
-					<a href="/wiki/편의시설">편의시설</a>
-				</td>
-				<td class="py-2 px-4 border-l">
-					<a href="/wiki/맛집"></a>
-				</td>
-				<td class="py-2 px-4 border-l">
-					<a href="/wiki/맛집"></a>
-				</td>
-			  </tr>
-			</tbody>
+				{#each groupedCategories as group}
+				  <tr>
+					{#each group as category}
+					  <td class="py-2 px-4">
+						<a href={`/wiki/아주위키:카테고리/${category.name}`}>{category.name}</a>
+					  </td>
+					{/each}
+				  </tr>
+				{/each}
+			  </tbody>
 		  </table>
 	</div>
 
@@ -365,17 +367,19 @@
 	</ul> -->
 
 	<!-- 최근 수정/등록된 문서 -->
-	<div class="flex items-center justify-between px-4 mt-8">
-		<h3>최근 편집된 문서</h3>
+	<div class="flex items-center justify-between px-4 mt-12">
+		<h3>문서</h3>
 		<a href="/wiki/아주위키:문서" class="text-gray-700 flex items-center">
 			모든 문서 보기
 			<Icon icon="chevron-right" size={16}/>
 		</a>
 	</div>
-
+	<!-- let date = new Date(n.date);
+	date.setHours(date.getHours() + 9);
+	n.date = date.toISOString(); -->
 	<ul class="mt-4">
-		{#each '012' as i}
-			<DocumentCard />
+		{#each docs as doc}
+			<DocumentCard title={doc.title} createdAt={doc.createdAt.slice(0, 10)}/>
 			<hr class="my-2" />
 		{/each}
 	</ul>

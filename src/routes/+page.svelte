@@ -292,11 +292,7 @@
 	const handleInfinityScroll = () => {
 		if (isLoadingMore) return;
 		const { scrollTop, clientHeight, scrollHeight } = document.documentElement;
-		console.log("스크롤 탑 + 클라이언트 높이: ", scrollTop + clientHeight);
-		console.log("스크롤 높이 - 50: ", scrollHeight - 100);
 		if (scrollTop + clientHeight >= scrollHeight - 100) {
-			console.log("인피니티 스크롤");
-			console.log(scrollTop, clientHeight, scrollHeight);
 			isLoadingMore = true;
 			loadMore().finally(() => {
 				isLoadingMore = false;

@@ -5,17 +5,20 @@
 	import { ACCESS_TOKEN, toastMessage } from '$lib/stores';
 	import { onMount } from 'svelte';
     import { goto } from '$app/navigation';
+    import { page } from '$app/stores';
+
+    const doc = $page.params.doc
 
 	let isHovered = false;
 
-	let categories = [];
-
-	let categoryName;
+	let category;
 	let agreeTerm = false;
+
+	let categories = [];
 
 	let editor: Editor;
 
-	let title = '';
+	let title= '';
 	let content = '';
 	let vanillaContent = '';
 
@@ -23,26 +26,39 @@
         const accessToken = $ACCESS_TOKEN || localStorage.getItem('h5prc2wcOyaKvGNQZZKiS');
         if (accessToken) {
 			$ACCESS_TOKEN = accessToken;
+			const categoryResponse = await fetch('/api/wiki/category', {
+				method: 'GET',
+				headers: {
+					'Content-Type': 'application/json'
+				}
+			});
+			if(categoryResponse.ok) {
+				const data = await categoryResponse.json();
+				data.forEach(element => {
+					categories.push(element.name);
+				});
+				categories = categories;
+			} else {
+				toastMessage.set('카테고리 목록을 불러오는데 실패했어요.');
+			}
+
+			await fetch(`/api/wiki?doc=${doc}`, {
+				method: 'GET',
+				headers: {
+					'Content-Type': 'application/json',
+				}
+			})
+				.then((documentResponse) => documentResponse.json())
+				.then((data) => {
+					console.log(data);
+					category = data.category.name;
+					title = data.title;
+					content = data.content;
+				});
 		} else {
             toastMessage.set('로그인이 필요합니다.');
             goto('/login');
         }
-
-		const response = await fetch('/api/wiki/category', {
-			method: 'GET',
-			headers: {
-				'Content-Type': 'application/json'
-			}
-		});
-		if(response.ok) {
-			const data = await response.json();
-			data.forEach(element => {
-				categories.push(element.name);
-			});
-			categories = categories;
-		} else {
-			toastMessage.set('카테고리 목록을 불러오는데 실패했어요.');
-		}
     })
 
 	const submitPromt = async (prompt: string) => {
@@ -64,49 +80,17 @@
 		// handle upload here
 		const blob = new Blob([file]);
 		const previewUrl = URL.createObjectURL(blob);
-		console.log(previewUrl);
 		return previewUrl;
 	};
 
-	// async function write() {
-	//     const response = await fetch('/api/htmltomd', {
-	//         method: 'POST',
-	//         headers: {
-	//             'Content-Type': 'application/json',
-	//         },
-	//         body: JSON.stringify({ html: content })
-	//     });
-	//     if(response.ok) {
-	//         const data = await response.json();
-	//         console.log(data.result);
-	//         //서버 로컬 저장
-	//         const fileSavingresult = await fetch('/api/wiki', {
-	//             method: 'POST',
-	//             headers: {
-	//                 'Content-Type': 'application/json',
-	//             },
-	//             body: JSON.stringify({ title, content: data.result })
-	//         })
-
-	//         if(fileSavingresult.ok) {
-	//             fetch('/api/wiki/check_update', {
-	//                 method: 'GET',
-	//                 headers: {
-	//                     'Content-Type': 'application/json',
-	//                 },
-	//             })
-	//         }
-	//     }
-	// }
-
 	async function write() {
 		const response = await fetch('/api/wiki', {
-			method: 'POST',
+			method: 'PATCH',
 			headers: {
 				'Content-Type': 'application/json',
                 Authorization: $ACCESS_TOKEN
 			},
-			body: JSON.stringify({ categoryName, title, content })
+			body: JSON.stringify({ title, content })
 		});
         if(response.ok) {
             const data = await response.json();
@@ -147,10 +131,11 @@
 		</div>
 
 		<select
-			bind:value={categoryName}
-			class="relative mt-1 w-full h-12 px-4 py-2 border border-gray-300 rounded-lg bg-white"
+			bind:value={category}
+			disabled
+			class="relative mt-1 w-full h-12 px-4 py-2 border border-gray-300 rounded-lg bg-gray-50"
 		>
-            <option value="" selected disabled hidden>카테고리를 선택해주세요.</option>
+			<option value="" selected disabled hidden>카테고리를 선택해주세요.</option>
 			{#each categories as c}
 				<option value={c}>{c}</option>
 			{/each}
@@ -159,6 +144,7 @@
 	<label class="block mt-4">
 		<div class="font-semibold text-gray-700">문서 제목</div>
 		<input
+			disabled
 			bind:value={title}
 			type="text"
 			class="relative mt-1 w-full h-12 px-4 py-2 border border-gray-300 rounded-lg"
@@ -168,6 +154,7 @@
 	<div class="mt-4">
 		<div class="font-semibold text-gray-700">본문</div>
 		<!-- <TextEditor bind:content /> -->
+		{#if content}
 		<div class="mt-1 h-96 border p-4 rounded-lg border-gray-300">
 			<EditorTheme
 				override={{
@@ -186,10 +173,11 @@
 				}}
 			>
 				<SvelteEditor
-					{content}
+					content={content}
 					placeholder="AI 어시스턴트 기능을 이용하려면 스페이스 바를 눌러주세요. 또한, /를 통해 명령어를 입력할 수 있습니다."
 					onCreated={(createdEditor) => {
 						editor = createdEditor;
+						content = content;
 					}}
 					onChange={(nextEditor) => {
 						editor = nextEditor;
@@ -208,6 +196,7 @@
 				/>
 			</EditorTheme>
 		</div>
+		{/if}
 	</div>
 
 	<!-- 약관 동의 -->
@@ -222,7 +211,7 @@
 
 <button
 	on:click={write}
-	class="{categoryName && agreeTerm && vanillaContent && title
+	class="{category && agreeTerm && vanillaContent && title
 		? 'bg-blue-500'
 		: 'bg-gray-300'} fixed bottom-0 text-white py-4 text-lg w-full max-w-4xl"
 	disabled={!agreeTerm}
