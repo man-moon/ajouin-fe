@@ -1,5 +1,5 @@
 <script>
-    import BackAppBar from "$lib/BackAppBar.svelte";
+    import BackAppbar from "$lib/BackAppbar.svelte";
     import Icon from "$lib/Icon.svelte";
     import { onMount } from 'svelte';
 
@@ -21,7 +21,7 @@
     });
 </script>
 
-<BackAppBar title="위키 문서"/>
+<BackAppbar title="위키 문서"/>
 
 <main class="p-4">
     <div class="flex flex-wrap gap-4">
