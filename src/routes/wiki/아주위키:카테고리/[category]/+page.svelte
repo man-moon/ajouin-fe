@@ -1,5 +1,5 @@
 <script>
-	import BackAppBar from '$lib/BackAppBar.svelte';
+	import BackAppbar from '$lib/BackAppbar.svelte';
 	import { page } from '$app/stores';
 	import Icon from '$lib/Icon.svelte';
 	import { onMount } from 'svelte';
@@ -28,7 +28,7 @@
 	});
 </script>
 
-<BackAppBar title="카테고리: {category}" />
+<BackAppbar title="카테고리: {category}" />
 
 {#if !isLoading}
 <main class="p-4">

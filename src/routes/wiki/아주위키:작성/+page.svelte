@@ -1,5 +1,5 @@
 <script lang="ts">
-	import BackAppBar from '$lib/BackAppBar.svelte';
+	import BackAppbar from '$lib/BackAppbar.svelte';
 	import { type Editor, EditorTheme, SvelteEditor } from '@nextlint/svelte';
 	import Icon from '$lib/Icon.svelte';
 	import { ACCESS_TOKEN, toastMessage } from '$lib/stores';
@@ -118,7 +118,7 @@
 	}
 </script>
 
-<BackAppBar title="위키 글 작성" />
+<BackAppbar title="위키 글 작성" />
 
 <main class="p-4">
 	<label>

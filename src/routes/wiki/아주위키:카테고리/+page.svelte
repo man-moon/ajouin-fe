@@ -1,5 +1,5 @@
 <script>
-    import BackAppBar from "$lib/BackAppBar.svelte";
+    import BackAppbar from "$lib/BackAppbar.svelte";
     import Icon from "$lib/Icon.svelte";
     import { goto } from "$app/navigation";
     import { toastMessage, ACCESS_TOKEN } from "$lib/stores.js";
@@ -50,7 +50,7 @@
     }
 </script>
 {#if !isCreatingCategory}
-    <BackAppBar title="위키 카테고리"/>
+    <BackAppbar title="위키 카테고리"/>
 
     <main class="p-4">
         <div class="grid grid-cols-3 gap-4">
