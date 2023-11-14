@@ -1,6 +1,6 @@
 import { createClient } from '@supabase/supabase-js'
 import { codeBlock, oneLine } from 'common-tags'
-import GPT3Tokenizer from 'gpt3-tokenizer'
+import GPT3NodeTokenizer from 'gpt3-tokenizer'
 import {
   Configuration,
   OpenAIApi,
@@ -100,7 +100,7 @@ export async function POST({ request }) {
       );
     }
 
-    const tokenizer = new GPT3Tokenizer({ type: 'gpt3' })
+    const tokenizer = new GPT3NodeTokenizer({ type: 'gpt3' })
     let tokenCount = 0
     let contextText = ''
 
