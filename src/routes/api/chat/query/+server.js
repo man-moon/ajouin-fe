@@ -146,14 +146,14 @@ export async function POST({ request }) {
       stream: true,
     })
 
-    if (!response.ok) {
-      const error = await response.json()
-      return new Response(
-        JSON.stringify(
-          { error: 'openai로부터 응답을 만들어내는 과정에서 오류 발생' }), 
-          { status: 500, headers: { 'Content-Type': 'application/json' } }
-      );
-    }
+    // if (!response.ok) {
+    //   const error = await response.json()
+    //   return new Response(
+    //     JSON.stringify(
+    //       { error: 'openai로부터 응답을 만들어내는 과정에서 오류 발생' }), 
+    //       { status: 500, headers: { 'Content-Type': 'application/json' } }
+    //   );
+    // }
 
     // Transform the response into a readable stream
     const stream = OpenAIStream(response)
