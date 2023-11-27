@@ -1,6 +1,5 @@
 import { createClient } from '@supabase/supabase-js'
 import { codeBlock, oneLine } from 'common-tags'
-import GPT3NodeTokenizer from 'gpt3-tokenizer'
 import {
   Configuration,
   OpenAIApi,
@@ -100,17 +99,15 @@ export async function POST({ request }) {
       );
     }
 
-    const tokenizer = new GPT3NodeTokenizer({ type: 'gpt3' })
     let tokenCount = 0
     let contextText = ''
 
     for (let i = 0; i < pageSections.length; i++) {
       const pageSection = pageSections[i]
       const content = pageSection.content
-      const encoded = tokenizer.encode(content)
-      tokenCount += encoded.text.length
+      tokenCount += content.length
 
-      if (tokenCount >= 1500) {
+      if (tokenCount >= 1000) {
         break
       }
 
