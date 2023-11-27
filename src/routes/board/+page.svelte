@@ -6,12 +6,29 @@
 	import { goto } from '$app/navigation';
 	import logo from '$lib/assets/logo.png';
 
-	const tags = ['#HOT', '전체글', '#아무말', '#홍보', '#취업', '#연애', '#술', '#유머', '#패션', '#헬스'];
-	let selectedTag = "#HOT";
+	let page = 0;
+
+	const tags = ['전체글', '아무말', '홍보', '취업', '연애', '술', '유머', '패션', '헬스'];
+	let selectedTag = '전체글';
 	let hideHeader = false;
 	let lastScrollPosition = 0;
+	let posts = [];
+
+	async function getPosts() {
+		const response = await fetch(`/api/board?tag=${selectedTag}&page=${page}`, {
+			method: 'GET',
+			headers: {
+				'Content-Type': 'application/json'
+			}
+		});
+		if (response.ok) {
+			const data = await response.json();
+			posts = [...posts, ...data.content];
+		}
+	}
 
 	onMount(() => {
+		getPosts();
 		const handleScroll = () => {
 			const currentScrollPosition = window.scrollY;
 
@@ -26,10 +43,25 @@
 			lastScrollPosition = currentScrollPosition;
 		};
 		window.addEventListener('scroll', handleScroll);
+		window.addEventListener('scroll', handleInfinityScroll);
 		return () => {
 			window.removeEventListener('scroll', handleScroll);
+			window.removeEventListener('scroll', handleInfinityScroll);
 		};
 	});
+
+	let isLoadingMore = false;
+	const handleInfinityScroll = () => {
+		if (isLoadingMore) return;
+		const { scrollTop, clientHeight, scrollHeight } = document.documentElement;
+		if (scrollTop + clientHeight >= scrollHeight - 100) {
+			isLoadingMore = true;
+			page++;
+			getPosts().finally(() => {
+				isLoadingMore = false;
+			});
+		}
+	};
 </script>
 
 <header class="sticky top-0 {hideHeader ? 'hide-animation' : ''}">
@@ -45,12 +77,12 @@
 				placeholder="검색어를 입력하세요"
 			/>
 		</div>
-		<button class="relative">
+		<!-- <button class="relative">
 			<Icon icon="bell" />
 			<div
 				class="absolute -right-1 -top-1 flex justify-center items-center w-2 h-2 rounded-full bg-red-500 text-xs text-white"
 			/>
-		</button>
+		</button> -->
 	</div>
 	<!-- 태그 -->
 	<div class="mb-4 pb-4 bg-white max-w-4xl border-b">
@@ -59,9 +91,12 @@
                 <div class="{i == 0 ? 'ml-4' : ''} {i == tags.length - 1 ? 'mr-4' : ''}">
                     <button on:click={() => {
                         selectedTag = tag;
+						page = 0;
+						posts = [];
+						getPosts();
                     }}
                         class="px-3 py-1 rounded-full whitespace-nowrap text-sm border border-blue-500 {selectedTag == tag ? 'bg-blue-500' : 'bg-white'} {selectedTag == tag ? 'text-white' : 'text-blue-500'}">
-                        {tag}
+                        #{tag}
                     </button>
                 </div>
             {/each}
@@ -87,10 +122,21 @@
 	<!-- 최신 포스트 -->
 	<!-- <h3 class="mt-4 p-4 pb-0 font-bold text-lg text-gray-700">최신 포스트 🍃</h3> -->
 
-	{#each '012345678912312321' as i}
-		<PostCard />
+	{#each posts as p, i}
+		<PostCard 
+			id={p.postId}
+			title={p.title}
+			content={p.content}
+			like={p.preferenceCount}
+			comment={p.commentCount}
+			view={p.viewCount}
+			time={p.timeAgo}
+			tag={p.tagName}
+			nickname={p.writerNickname}
+		/>
 		<hr class="my-4" />
 	{/each}
+	<div class="h-16" />
 </main>
 
 
@@ -102,7 +148,7 @@
 {/if} -->
 
 <!-- 포스트 작성 -->
-<div class="w-full sticky bottom-20 max-w-4xl flex items-center justify-center">
+<div class="w-full fixed bottom-20 max-w-4xl flex items-center justify-center">
 	<button on:click={()=>{
 		goto('/board/write');
 	}} class="shadow-md rounded-full bg-blue-500 text-white">

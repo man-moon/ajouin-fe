@@ -44,7 +44,6 @@
         if (response.ok) {
             location.reload();
         } else {
-            console.log(response)
             toastMessage.set("카테고리 생성에 실패했어요.")
         }
     }

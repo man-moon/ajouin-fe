@@ -39,7 +39,6 @@
         if(response) {
             waitingResponse = false;
             const data = await response.json();
-            console.log(data);
             messages = [
                 ...messages,
                 {

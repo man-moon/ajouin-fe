@@ -272,12 +272,12 @@
 				placeholder="검색어를 입력하세요"
 			/>
 		</div>
-		<button class="relative">
+		<!-- <button class="relative">
 			<Icon icon="bell" />
 			<div
 				class="absolute -right-1 -top-1 flex justify-center items-center w-2 h-2 rounded-full bg-red-500 text-xs text-white"
 			/>
-		</button>
+		</button> -->
 	</div>
 </header>
 

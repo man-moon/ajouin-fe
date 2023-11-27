@@ -50,7 +50,6 @@
 			})
 				.then((documentResponse) => documentResponse.json())
 				.then((data) => {
-					console.log(data);
 					category = data.category.name;
 					title = data.title;
 					content = data.content;
@@ -71,7 +70,6 @@
 		});
 		if (response.ok) {
 			const data = await response.json();
-			console.log(data.result);
 			return data.result;
 		}
 	};
@@ -83,7 +81,38 @@
 		return previewUrl;
 	};
 
+	async function localWrite() {
+	    const response = await fetch('/api/htmltomd', {
+	        method: 'POST',
+	        headers: {
+	            'Content-Type': 'application/json',
+	        },
+	        body: JSON.stringify({ html: content })
+	    });
+	    if(response.ok) {
+	        const data = await response.json();
+	        //서버 로컬 파일 업데이트
+	        const fileSavingresult = await fetch('/api/wiki/local', {
+	            method: 'POST',
+	            headers: {
+	                'Content-Type': 'application/json',
+	            },
+	            body: JSON.stringify({ title, content: data.result })
+	        })
+
+	        if(fileSavingresult.ok) {
+	            fetch('/api/wiki/check_update', {
+	                method: 'GET',
+	                headers: {
+	                    'Content-Type': 'application/json',
+	                },
+	            })
+	        }
+	    }
+	}
+
 	async function write() {
+		localWrite();
 		const response = await fetch('/api/wiki', {
 			method: 'PATCH',
 			headers: {

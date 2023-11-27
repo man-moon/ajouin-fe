@@ -10,6 +10,8 @@
 
 	let categories = [];
 
+	let files = [];
+
 	let categoryName;
 	let agreeTerm = false;
 
@@ -55,58 +57,57 @@
 		});
 		if (response.ok) {
 			const data = await response.json();
-			console.log(data.result);
 			return data.result;
 		}
 	};
 
 	const handleUpload = async (file: File) => {
+		files.push(file);
 		// handle upload here
 		const blob = new Blob([file]);
 		const previewUrl = URL.createObjectURL(blob);
-		console.log(previewUrl);
 		return previewUrl;
 	};
 
-	// async function write() {
-	//     const response = await fetch('/api/htmltomd', {
-	//         method: 'POST',
-	//         headers: {
-	//             'Content-Type': 'application/json',
-	//         },
-	//         body: JSON.stringify({ html: content })
-	//     });
-	//     if(response.ok) {
-	//         const data = await response.json();
-	//         console.log(data.result);
-	//         //서버 로컬 저장
-	//         const fileSavingresult = await fetch('/api/wiki', {
-	//             method: 'POST',
-	//             headers: {
-	//                 'Content-Type': 'application/json',
-	//             },
-	//             body: JSON.stringify({ title, content: data.result })
-	//         })
+	async function localWrite() {
+	    const response = await fetch('/api/htmltomd', {
+	        method: 'POST',
+	        headers: {
+	            'Content-Type': 'application/json',
+	        },
+	        body: JSON.stringify({ html: content })
+	    });
+	    if(response.ok) {
+	        const data = await response.json();
+	        //서버 로컬에 저장
+	        const fileSavingresult = await fetch('/api/wiki/local', {
+	            method: 'POST',
+	            headers: {
+	                'Content-Type': 'application/json',
+	            },
+	            body: JSON.stringify({ title, content: data.result })
+	        })
 
-	//         if(fileSavingresult.ok) {
-	//             fetch('/api/wiki/check_update', {
-	//                 method: 'GET',
-	//                 headers: {
-	//                     'Content-Type': 'application/json',
-	//                 },
-	//             })
-	//         }
-	//     }
-	// }
+	        if(fileSavingresult.ok) {
+	            fetch('/api/wiki/check_update', {
+	                method: 'GET',
+	                headers: {
+	                    'Content-Type': 'application/json',
+	                },
+	            })
+	        }
+	    }
+	}
 
 	async function write() {
+		localWrite();
 		const response = await fetch('/api/wiki', {
 			method: 'POST',
 			headers: {
 				'Content-Type': 'application/json',
                 Authorization: $ACCESS_TOKEN
 			},
-			body: JSON.stringify({ categoryName, title, content })
+			body: JSON.stringify({ categoryName, title, content, files })
 		});
         if(response.ok) {
             const data = await response.json();

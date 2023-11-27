@@ -133,7 +133,7 @@ export async function POST({ request }) {
       ${sanitizedQuery}
       """
 
-      Answer in korean:
+      Answer in korean and kindly:
     `
 
     const chatMessage = {

@@ -1,6 +1,19 @@
 <script>
 	import BackAppbar from "$lib/BackAppbar.svelte";
 	import Icon from "$lib/Icon.svelte";
+    import { ACCESS_TOKEN, toastMessage } from "$lib/stores";
+    import { onMount } from "svelte";
+    import { goto } from "$app/navigation";
+
+    onMount(async () => {
+		const accessToken = $ACCESS_TOKEN || localStorage.getItem('h5prc2wcOyaKvGNQZZKiS');
+		if (accessToken) {
+			$ACCESS_TOKEN = accessToken;
+		} else {
+            toastMessage.set('로그인이 필요해요');
+            goto('/board');
+        }
+	});
 
     let fileInput;
 
@@ -10,12 +23,32 @@
     let title = "";
     let content = "";
 
+    async function submit() {
+        const response = await fetch("/api/board/post", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+                Authorization: $ACCESS_TOKEN,
+            },
+            body: JSON.stringify({
+                tag: selectedTag,
+                title,
+                content,
+                isAnonymous: true,
+            }),
+        });
+        if (response.ok) {
+            const data = await response.json();
+            goto(`/board/${data.postId}`);
+        }
+    }
+
 </script>
 
 <BackAppbar title="게시글 작성" path="/board" />
 
 <!-- 태그 선택 -->
-<main class="h-screen">
+<main class="">
     <label class="block pt-4">
         <span class="text-gray-700 font-bold px-4">태그</span>
         <div class="overflow-x-auto flex gap-2 mt-2">
@@ -46,7 +79,7 @@
     </label>
     
     <!-- 첨부파일 -->
-    <div class="p-4 flex gap-4 overflow-x-auto">
+    <!-- <div class="p-4 flex gap-4 overflow-x-auto">
         <div>
             <button on:click={() => {
                     fileInput.click();
@@ -56,33 +89,15 @@
             </button>
             <input bind:this={fileInput} type="file" class="hidden w-full border border-t-0 border-x-0 p-2" />
         </div>
-    
-        <div>
-            <div class="h-24 w-24 rounded-lg bg-gray-300" />
-        </div>
-        <div>
-            <div class="h-24 w-24 rounded-lg bg-gray-300" />
-        </div>
-        <div>
-            <div class="h-24 w-24 rounded-lg bg-gray-300" />
-        </div>
-        <div>
-            <div class="h-24 w-24 rounded-lg bg-gray-300" />
-        </div>
-    </div>
-
-    <p class="p-4 text-sm">
-        글작성 약관
-    </p>
+    </div> -->
 </main>
 
 
 
 
 <!-- 글 작성 버튼 -->
-<div class="sticky bottom-0 inset-x-0">
-    <button on:click={()=>{
-    }}
+<div class="fixed max-w-4xl w-full bottom-0">
+    <button on:click={submit}
     class="bg-blue-500 text-white py-4 text-lg w-full">
         완료
     </button>

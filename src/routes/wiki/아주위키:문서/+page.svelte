@@ -16,7 +16,6 @@
 		if (response.ok) {
 			const data = await response.json();
 			docs = data.documents;
-            console.log(docs);
 		}
     });
 </script>

@@ -16,7 +16,6 @@ const openai = new OpenAIApi(config)
 
 export async function POST({ request }) {
     const { query } = await request.json();
-    console.log(query);
 
     const prompt = codeBlock`
       ${oneLine`
