@@ -14,6 +14,11 @@
 			}
 		]
 	});
+	$: {
+		if(messages) {
+			console.log("processing...");
+		}
+	}
 
 	let scrollElement, formElement, headerElement;
 
