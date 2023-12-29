@@ -8,7 +8,7 @@
 		"preview": "vite preview",
 		"lint": "prettier --plugin-search-dir . --check .",
 		"format": "prettier --plugin-search-dir . --write .",
-		"postbuild": "npx svelte-sitemap --out-dir .vercel/output/static --domain https://www.ajou.in",
+		"postbuild": "npx svelte-sitemap --out-dir .vercel/output/static --domain https://www.ajou.in"
 	},
 	"devDependencies": {
 		"@sveltejs/adapter-auto": "^2.0.0",
@@ -29,6 +29,6 @@
 	"dependencies": {
 		"@vercel/analytics": "^1.1.0",
 		"dotenv": "^16.0.3",
-		"feather-icons": "^4.29.1",
+		"feather-icons": "^4.29.1"
 	}
 }
