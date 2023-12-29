@@ -45,14 +45,16 @@
 </script>
 
 <header class="mt-32 flex flex-col items-center justify-center">
-    <h1 class="flex text-blue-500 text-3xl font-extrabold">
-        아주인
-    </h1>
-    <div class="font-bold text-gray-400">아주대학교 커뮤니티</div>
-    <a href="/" class="border-b border-gray-700 flex items-center text-gray-500 mt-2 text-center text-sm">
+    <a href="/">
+        <h1 class="flex text-blue-500 text-3xl font-extrabold">
+            아주대학교 공지모아
+        </h1>
+    </a>
+    <div class="mt-2 font-bold text-gray-400">아주대학교 공지를 한 눈에!</div>
+    <!-- <a href="/" class="border-b border-gray-700 flex items-center text-gray-500 mt-2 text-center text-sm">
         둘러보기
         <Icon icon={"chevron-right"} size={18} />
-    </a>
+    </a> -->
 </header>
 
 <form on:submit|preventDefault={login} class="mt-12 px-4 md:px-48">

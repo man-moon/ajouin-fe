@@ -5,10 +5,8 @@
 	import { browser } from '$app/environment';
 	import logo from '$lib/assets/logo.png';
 	import { ACCESS_TOKEN, toastMessage, myBookMark } from '$lib/stores';
-	import Nav from '$lib/Nav.svelte';
-	import Appbar from '$lib/Appbar.svelte';
 
-	let latestUpdateTime = '2023-10-10 00:00:00';
+	let latestUpdateTime = '';
 	let fetchedNotices = [];
 	let fetchedTypes;
 	//리스트로 보여줄 공지사항 배열
@@ -145,7 +143,7 @@
 		const hours = date.getHours();
 		const minutes = date.getMinutes();
 
-		latestUpdateTime = `${year}년 ${month}월 ${day}일 ${hours}시 ${minutes}분`;
+		latestUpdateTime = `${month}월 ${day}일 ${hours}시 ${minutes}분`;
 
 		fetchedNotices = fetchedNotices.map((n) => {
 			n.isBookMarked = $myBookMark.filter((b) => b.id == n.id).length > 0;
@@ -193,7 +191,7 @@
 	//총학생회소식, 단과대학생회소식, 학과학생회소식
 	let noticeFilterPage;
 
-	let generalFilters = ['일반공지', '장학공지', '생활관', '링크사업단', '중앙도서관'];
+	let generalFilters = ['일반공지', '장학공지'];
 
 	let collegeFilters = [
 		'공과대학',
@@ -342,21 +340,31 @@
 <!-- 필터 선택창 닫았을 때 화면 -->
 {#if noticeFilterPage == null}
 	<div class="z-30 sticky top-0 border-b bg-white h-16 flex items-center justify-between p-4">
-		<a href="/" class="flex items-center gap-4">
-			<img src={logo} alt="홈아이콘" class="w-10" />
-			<div>
-				<h1 class="text-xl font-semibold">아주대학교 공지</h1>
-				<div class="text-xs text-gray-500 flex items-center gap-1">
-					업데이트: {latestUpdateTime}
-					<button on:click={() => {
-						const cachedTypes = localStorage.getItem('lugTcOmCFqTv9T35Detf');
-						getNotices(cachedTypes)
-					}}>
-						<Icon icon="refresh-cw" size={10} />
-					</button>
+		<div class="flex justify-between w-full">
+			<div class="flex items-center gap-4">
+				<a href="/">
+					<img src={logo} alt="홈아이콘" class="w-10" />
+				</a>
+				<div>
+					<a href="/">
+						<h1 class="text-xl font-semibold">아주대학교 공지모아</h1>
+					</a>
+					<div class="text-xs text-gray-500 flex items-center gap-1">
+						업데이트: {latestUpdateTime}
+						<!-- <button on:click={() => {
+							const cachedTypes = localStorage.getItem('lugTcOmCFqTv9T35Detf');
+							getNotices(cachedTypes)
+						}}>
+							<Icon icon="refresh-cw" size={10} />
+						</button> -->
+					</div>
 				</div>
 			</div>
-		</a>
+			<a href="/mypage" class="text-sm text-gray-600 rounded-full flex items-center">
+				마이페이지
+				<Icon icon="chevron-right" size={18} />
+			</a>
+		</div>
 	</div>
 	<!-- 필터 -->
 	<header class="sticky top-16 bg-white {hideHeader ? 'hide-animation' : ''}">
@@ -453,8 +461,6 @@
 			</div>
 		</div>
 	</footer>
-	<!-- <div class="h-16" /> -->
-	<Nav currentPath="/" />
 {:else if noticeFilterPage == '일반공지'}
 	<h3 class="p-4">공지사항을 확인할 포탈을 선택하세요</h3>
 	<ul class="p-4 flex flex-wrap items-center text-center">
