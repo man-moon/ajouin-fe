@@ -75,7 +75,7 @@
 	}
 </script>
 
-<div class="px-4 py-2 flex items-center justify-between">
+<div class="px-4 py-2 flex items-center justify-between {getTimeAgo(notice.createdAt) ? 'border-blue-50':''}">
 	<button
 		on:click={() => {
 			fetch('/api/views', {
@@ -104,10 +104,10 @@
 					{notice.date.slice(0, 10)}
 				</div>
 			{/if}
-			<div class="flex items-center gap-1">
+			<!-- <div class="flex items-center gap-1">
 				<Icon icon="eye" size={12} />
 				{notice.views}
-			</div>
+			</div> -->
 		</div>
 	</button>
 	<button on:click={toggleBookMark} class="text-gray-500">
