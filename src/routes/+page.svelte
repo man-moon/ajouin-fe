@@ -5,6 +5,9 @@
 	import { browser } from '$app/environment';
 	import logo from '$lib/assets/logo.png';
 	import { ACCESS_TOKEN, toastMessage, myBookMark } from '$lib/stores';
+	import { page } from "$app/stores"
+    import { SignIn, SignOut } from "@auth/sveltekit/components"
+
 
 	let latestUpdateTime = '';
 	let fetchedNotices = [];
@@ -360,10 +363,25 @@
 					</div>
 				</div>
 			</div>
-			<a href="/mypage" class="text-sm text-gray-600 rounded-full flex items-center">
-				마이페이지
-				<Icon icon="chevron-right" size={18} />
-			</a>
+			{#if $page.data.session}
+				<a href="/mypage" class="text-sm text-gray-600 rounded-full flex items-center gap-1">
+					<img
+						src={$page.data.session.user.image}
+						class="w-7 rounded-full"
+						alt="User Avatar"
+					/>
+					<Icon icon="chevron-right" size={18} />
+				</a>
+			{:else}
+				<div class="w-fit m-2 px-2 py-1 bg-blue-500 text-white text-sm rounded-lg">
+					<SignIn provider="google" signInPage="signin">
+						<div slot="submitButton">
+							
+							구글로 로그인
+						</div>
+					</SignIn>
+				</div>
+			{/if}
 		</div>
 	</div>
 	<!-- 필터 -->

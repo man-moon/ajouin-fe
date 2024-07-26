@@ -2,7 +2,7 @@ export async function POST({ request }) {
     const { name, description } = await request.json();
     const accessToken = await request.headers.get('Authorization');
 
-    const response = await fetch('http://222.251.154.231:8082/wiki/category', {
+    const response = await fetch('http://localhost:8080/wiki/category', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
@@ -15,7 +15,7 @@ export async function POST({ request }) {
 }
 
 export async function GET() {
-    const response = await fetch('http://222.251.154.231:8082/wiki/categories', {
+    const response = await fetch('http://localhost:8080/wiki/categories', {
         method: 'GET',
         headers: {
             'Content-Type': 'application/json',

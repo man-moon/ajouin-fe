@@ -6,16 +6,25 @@
 	import { onMount } from 'svelte';
 	import { dev } from '$app/environment';
 	import { inject } from '@vercel/analytics';
-	import ChatBot from '$lib/ChatBot.svelte';
 
-	onMount(()=>{
-		const accessToken = localStorage.getItem('h5prc2wcOyaKvGNQZZKiS')
-		if(accessToken) {
-			$ACCESS_TOKEN = accessToken;
-		}
-	})
 
-	inject({ mode: dev ? 'development' : 'production' });
+	// onMount(()=>{
+	// 	const accessToken = localStorage.getItem('h5prc2wcOyaKvGNQZZKiS')
+	// 	if(accessToken) {
+	// 		$ACCESS_TOKEN = accessToken;
+	// 	}
+	// })
+
+	
+	// onMount(async () => {
+	// 	const response = await fetch('/api/auth/user');
+	// 	const user = await response.json();
+	// 	if (user) {
+	// 		auth.setUser(user);
+	// 	}
+	// });
+
+	// inject({ mode: dev ? 'development' : 'production' });
 
 </script>
 

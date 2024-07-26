@@ -6,22 +6,24 @@
 	import { onMount } from 'svelte';
 	import { toastMessage, ACCESS_TOKEN, myBookMark } from '$lib/stores';
 	import NoticeCard from '$lib/NoticeCard.svelte';
+    import {page} from "$app/stores";
+    import { SignIn, SignOut } from "@auth/sveltekit/components"
 
 	let email = '';
 	let showLoading = true;
 	let step = 'main';
 
-	onMount(async () => {
-		showLoading = true;
-		const accessToken = $ACCESS_TOKEN || localStorage.getItem('h5prc2wcOyaKvGNQZZKiS');
-		if (accessToken) {
-			$ACCESS_TOKEN = accessToken;
-			if ($myBookMark.length == 0) {
-				await getBookMarks();
-			}
-		}
-		showLoading = false;
-	});
+	// onMount(async () => {
+	// 	showLoading = true;
+	// 	const accessToken = $ACCESS_TOKEN || localStorage.getItem('h5prc2wcOyaKvGNQZZKiS');
+	// 	if (accessToken) {
+	// 		$ACCESS_TOKEN = accessToken;
+	// 		if ($myBookMark.length == 0) {
+	// 			await getBookMarks();
+	// 		}
+	// 	}
+	// 	showLoading = false;
+	// });
 
 	async function getBookMarks() {
 		const response = await fetch('/api/bookmark', {
@@ -98,6 +100,11 @@
 <BackAppbar title="마이페이지" />
 
 <main>
+    {#if $page.data.session}
+		<div class="w-fit m-2 px-2 py-1 bg-blue-500 text-white text-sm rounded-lg">
+			<SignOut />
+		</div>
+	{/if}
 	{#if showLoading}
 		<div class="itmes-center mt-24 flex justify-center text-blue-500 z-0">
 			<svg

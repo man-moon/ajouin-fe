@@ -1,5 +1,5 @@
 async function getResponse(request) {
-    const response = await fetch('http://222.251.154.231:8082/auth/email/resetpassword', {
+    const response = await fetch('http://localhost:8080/auth/email/resetpassword', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json'
