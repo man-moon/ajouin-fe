@@ -25,4 +25,13 @@
             <SignIn provider="google" signInPage="signin" />
         </div>
     {/if}
+    <button class="bg-blue-500"
+    on:click={async() => {
+        	const response = await fetch('/api/test', {
+			method: 'GET',
+		});
+        console.log(response);
+    }}>
+        asdf
+    </button>
 </p>

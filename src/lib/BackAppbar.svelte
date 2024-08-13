@@ -20,7 +20,7 @@
         <polyline points="12 19 5 12 12 5"></polyline>
       </svg>
     </button>
-    <div class="text-center w-full font-bold">
+    <div class="px-14 text-center w-full font-bold truncate">
       {title}
     </div>
 </div>

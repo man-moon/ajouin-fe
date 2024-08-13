@@ -2,7 +2,7 @@ export async function POST({ request }) {
     const { categoryName, title, content } = await request.json();
     const accessToken = await request.headers.get('Authorization')
 
-    const response = await fetch('http://localhost:8080/wiki', {
+    const response = await fetch('http://129.154.51.227:8083/wiki', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
@@ -20,10 +20,10 @@ export async function GET({ url }) {
     const ver = url.searchParams.get('ver');
 
     if(ver) {
-        const response = await fetch(`http://localhost:8080/wiki/document?doc=${doc}&ver=${ver}`);
+        const response = await fetch(`http://129.154.51.227:8083/wiki/document?doc=${doc}&ver=${ver}`);
         return response;
     } else {
-        const response = await fetch(`http://localhost:8080/wiki/document?doc=${doc}`);
+        const response = await fetch(`http://129.154.51.227:8083/wiki/document?doc=${doc}`);
         return response;
     }
 }
@@ -32,7 +32,7 @@ export async function PATCH({ request }) {
     const { title, content } = await request.json();
     const accessToken = await request.headers.get('Authorization')
 
-    const response = await fetch('http://localhost:8080/wiki', {
+    const response = await fetch('http://129.154.51.227:8083/wiki', {
         method: 'PATCH',
         headers: {
             'Content-Type': 'application/json',

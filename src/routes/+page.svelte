@@ -4,18 +4,17 @@
 	import { onDestroy, onMount } from 'svelte';
 	import { browser } from '$app/environment';
 	import logo from '$lib/assets/logo.png';
-	import { ACCESS_TOKEN, toastMessage, myBookMark } from '$lib/stores';
-	import { page } from "$app/stores"
-    import { SignIn, SignOut } from "@auth/sveltekit/components"
-
+	import { page } from '$app/stores';
+	import { SignIn, SignOut } from '@auth/sveltekit/components';
+	import { noticeStore, selectedType, bookmarkStore, reminderStore } from '$lib/stores';
+	import { toast } from '@zerodevx/svelte-toast'
 
 	let latestUpdateTime = '';
-	let fetchedNotices = [];
+	// let fetchedNotices = $noticeStore;
 	let fetchedTypes;
 	//리스트로 보여줄 공지사항 배열
-	let showNotices = [];
-	let selectedType = '';
-	$: fetchedTypes = [...new Set(fetchedNotices.map((n) => n.type))];
+	let showNotices = $noticeStore.filter((n) => n.noticeType == $selectedType);
+	$: fetchedTypes = [...new Set($noticeStore.map((n) => n.noticeType))];
 
 	let offsetPerType = {
 		일반공지: 0,
@@ -73,113 +72,81 @@
 	};
 
 	async function loadMore() {
-		offsetPerType[selectedType] += 20;
-		const response = await fetch(
-			`/api/notices?type=${selectedType}&offset=${offsetPerType[selectedType]}`,
-			{
-				method: 'GET',
-				headers: {
-					'Content-Type': 'application/json'
-				}
-			}
-		);
+		offsetPerType[$selectedType] += 20;
+		const url = new URL(`api/notices?types=${$selectedType}`, window.location.origin);
+		url.searchParams.append('offset', offsetPerType[$selectedType]);
+		url.searchParams.append('limit', 20);
+		url.searchParams.append('includeTopFixed', false);
+		const response = await fetch(url, {
+			method: 'GET'
+		});
 		const data = await response.json();
-		let additionalNotices = data.notices;
+		console.log('===loadMore===');
+		console.log(data);
+		let additionalNotices = data.notice;
 		additionalNotices = additionalNotices.map((n) => {
-			n.isBookMarked = $myBookMark.filter((b) => b.id == n.id).length > 0;
-			//showNotices의 가장 마지막 원소 id와 같다면 제거
 			if (showNotices.length > 0 && showNotices[showNotices.length - 1].id == n.id) {
 				showNotices.pop();
 			}
-			
+
 			return n;
 		});
-		//날짜 시간대 맞추기
-		additionalNotices = additionalNotices.map((n) => {
-			let date = new Date(n.date);
-			date.setHours(date.getHours() + 9);
-			n.date = date.toISOString();
-			return n;
-		});
+
 		//학과이름 숫자 제거
 		additionalNotices = additionalNotices.map((n) => {
-			n.type = n.type.replace(/[0-9]/g, '');
+			n.noticeType = n.noticeType.replace(/[0-9]/g, '');
 			return n;
 		});
 		showNotices = [...showNotices, ...additionalNotices];
 	}
 
 	async function getNotices(init) {
-		//북마크 정보도 가져오기
-		const response = await fetch('/api/notices', {
-			method: 'POST',
-			headers: {
-				'Content-Type': 'application/json',
-				Authorization:
-					$ACCESS_TOKEN || localStorage.getItem('h5prc2wcOyaKvGNQZZKiS')
-						? $ACCESS_TOKEN || localStorage.getItem('h5prc2wcOyaKvGNQZZKiS')
-						: ''
-			},
-			body: JSON.stringify({
-				notices: init ? init : selectedTotalFilters
-			})
-		});
-		if (!response.ok) {
-			localStorage.removeItem('h5prc2wcOyaKvGNQZZKiS');
-			toastMessage.set('로그인이 필요합니다.');
-			location.reload();
+		const notices = init ? init : selectedTotalFilters;
+		if(notices.length == 0) {
+			toast.push('최소 하나 이상의 필터는 선택되어있어야 해요');
 			return;
 		}
+		const queryString = notices.map((notice) => `types=${encodeURIComponent(notice)}`).join('&');
+		const url = new URL(`api/notices?${queryString}`, window.location.origin);
+		url.searchParams.append('offset', 0);
+		url.searchParams.append('limit', 20);
+		url.searchParams.append('includeTopFixed', true);
+
+		const response = await fetch(url, {
+			method: 'GET'
+		});
+
 		const data = await response.json();
+		console.log(data);
 
-		fetchedNotices = data.notices;
-		$myBookMark = data.bookMarks || [];
-		$myBookMark = $myBookMark.map((b) => {
-			b.isBookMarked = true;
-			return b;
-		});
-
-		const date = new Date(data.latestUpdateTime);
-		const year = date.getFullYear();
-		const month = date.getMonth() + 1;
-		const day = date.getDate();
-		const hours = date.getHours();
-		const minutes = date.getMinutes();
-
-		latestUpdateTime = `${month}월 ${day}일 ${hours}시 ${minutes}분`;
+		let fetchedNotices = data.notice;
 
 		fetchedNotices = fetchedNotices.map((n) => {
-			n.isBookMarked = $myBookMark.filter((b) => b.id == n.id).length > 0;
+			n.noticeType = n.noticeType.replace(/[0-9]/g, '');
 			return n;
 		});
+		$noticeStore = fetchedNotices;
 
-		//날짜 시간대 맞추기
-		fetchedNotices = fetchedNotices.map((n) => {
-			let date = new Date(n.date);
-			date.setHours(date.getHours() + 9);
-			n.date = date.toISOString();
-			return n;
-		});
-		//학과이름 숫자 제거
-		fetchedNotices = fetchedNotices.map((n) => {
-			n.type = n.type.replace(/[0-9]/g, '');
-			return n;
-		});
 		//이미 선택하고 있던 타입이 제거된 경우
-		if (selectedType == '' || fetchedNotices.filter((n) => n.type == selectedType).length == 0) {
-			selectedType = fetchedNotices[0].type;
+		if (
+			$selectedType == '' ||
+			$noticeStore.filter((n) => n.noticeType == $selectedType).length == 0
+		) {
+			$selectedType = $noticeStore[0].noticeType;
 		}
+		console.log("캐싱된 공지사항 데이터 저장");
+		console.log($noticeStore);
 		if (browser) {
 			localStorage.setItem(
 				'lugTcOmCFqTv9T35Detf',
-				JSON.stringify([...new Set(fetchedNotices.map((n) => n.type))])
+				JSON.stringify([...new Set($noticeStore.map((n) => n.noticeType))])
 			);
 		}
 	}
 
 	$: {
-		showNotices = fetchedNotices.filter((n) => n.type == selectedType);
-		offsetPerType[selectedType] = 0;
+		showNotices = $noticeStore.filter((n) => n.noticeType == $selectedType);
+		offsetPerType[$selectedType] = 0;
 		if (typeof window !== 'undefined') {
 			window.scrollTo({
 				top: 0
@@ -187,11 +154,7 @@
 		}
 	}
 
-	//UNIV_NOTICE or STUDENT_COUNCIL_NOTICE
-	let tabState = 'UNIV_NOTICE';
-
-	//일반공지, 단과대공지, 학과공지,
-	//총학생회소식, 단과대학생회소식, 학과학생회소식
+	//일반공지, 단과대공지, 학과공지
 	let noticeFilterPage;
 
 	let generalFilters = ['일반공지', '장학공지'];
@@ -247,19 +210,10 @@
 		'정치외교학과',
 		'스포츠레저학과'
 	];
-	// let medicalDepFilters = ['의학과'];
-	// let nursingDepFilters = ['간호학과'];
-	// let pharmacyDepFilters = ['약학과'];
 
 	let selectedGeneralFilters = ['일반공지', '장학공지'];
 	let selectedCollegeFilters = [];
 	let selectedDepFilters = [];
-
-	// let studentCouncilFilters = ['총학생회'];
-
-	// let selectedStudeneCouncilFilters = ['총학생회'];
-	// let selectedStudentCouncilCollegeFilters = [];
-	// let selectedStudentCouncilDepFilters = [];
 
 	let selectedTotalFilters = [
 		...selectedGeneralFilters,
@@ -302,31 +256,38 @@
 	};
 
 	onMount(async () => {
-		let cachedTypes = localStorage.getItem('lugTcOmCFqTv9T35Detf');
-		if (cachedTypes) {
-			cachedTypes = JSON.parse(cachedTypes);
-			selectedTotalFilters = cachedTypes;
-			fetchedTypes = cachedTypes;
+		if ($noticeStore.length == 0) {
+			console.log("다시 공지사항 가져옴");
+			let cachedTypes = localStorage.getItem('lugTcOmCFqTv9T35Detf');
+			if (cachedTypes) {
+				cachedTypes = JSON.parse(cachedTypes);
+				selectedTotalFilters = cachedTypes;
+				fetchedTypes = cachedTypes;
 
-			//각 필터 그룹군에 맞게 필터 할당
-			selectedGeneralFilters = cachedTypes.filter((t) => generalFilters.includes(t));
-			selectedCollegeFilters = cachedTypes.filter((t) => collegeFilters.includes(t));
-			selectedDepFilters = cachedTypes.filter((t) =>
-				[
-					...engineeringDepFilters,
-					...informationDepFilters,
-					...softwareConvergenceDepFilters,
-					...naturalSciencesDepFilters,
-					...businessDepFilters,
-					...humanitiesDepFilters,
-					...socialSciencesDepFilters
-				].includes(t)
-			);
+				//각 필터 그룹군에 맞게 필터 할당
+				selectedGeneralFilters = cachedTypes.filter((t) => generalFilters.includes(t));
+				selectedCollegeFilters = cachedTypes.filter((t) => collegeFilters.includes(t));
+				selectedDepFilters = cachedTypes.filter((t) =>
+					[
+						...engineeringDepFilters,
+						...informationDepFilters,
+						...softwareConvergenceDepFilters,
+						...naturalSciencesDepFilters,
+						...businessDepFilters,
+						...humanitiesDepFilters,
+						...socialSciencesDepFilters
+					].includes(t)
+				);
 
-			await getNotices(cachedTypes);
+				await getNotices(cachedTypes);
+			} else {
+				await getNotices(['일반공지', '장학공지']);
+			}
 		} else {
-			await getNotices(['일반공지', '장학공지']);
+			console.log("캐싱된 공지사항 데이터 사용");
+			console.log($noticeStore);
 		}
+
 		window.addEventListener('scroll', handleScroll);
 		window.addEventListener('scroll', handleInfinityScroll);
 	});
@@ -365,20 +326,13 @@
 			</div>
 			{#if $page.data.session}
 				<a href="/mypage" class="text-sm text-gray-600 rounded-full flex items-center gap-1">
-					<img
-						src={$page.data.session.user.image}
-						class="w-7 rounded-full"
-						alt="User Avatar"
-					/>
+					<img src={$page.data.session.user.image} class="w-7 rounded-full" alt="User Avatar" />
 					<Icon icon="chevron-right" size={18} />
 				</a>
 			{:else}
 				<div class="w-fit m-2 px-2 py-1 bg-blue-500 text-white text-sm rounded-lg">
 					<SignIn provider="google" signInPage="signin">
-						<div slot="submitButton">
-							
-							구글로 로그인
-						</div>
+						<div slot="submitButton">구글로 로그인</div>
 					</SignIn>
 				</div>
 			{/if}
@@ -428,7 +382,7 @@
 					<li>
 						<input
 							type="radio"
-							bind:group={selectedType}
+							bind:group={$selectedType}
 							id={i}
 							name="themeColor"
 							value={t}
@@ -436,7 +390,7 @@
 						/>
 						<label
 							for={i}
-							class="flex px-2 py-1 items-center justify-center {selectedType == t
+							class="flex px-2 py-1 items-center justify-center {$selectedType == t
 								? 'text-white bg-blue-500 border border-blue-500'
 								: 'text-gray-500 border border-gray-300'} cursor-pointer rounded-full"
 						>
@@ -472,10 +426,11 @@
 		{/if}
 	</main>
 	<footer class="mb-16 bg-gray-100 p-4 text-xs text-gray-500 text-center">
-		<div class="text-sm">아주인
+		<div class="text-sm">
+			아주인
 			<div class="text-gray-500">
 				Contact
-			<span>admin@ajou.in</span>
+				<span>admin@ajou.in</span>
 			</div>
 		</div>
 	</footer>

@@ -11,14 +11,14 @@ export async function GET({ url }) {
     const tag = url.searchParams.get('tag');
     let response;
     if(tag == '전체글') {
-        response = await fetch(`http://localhost:8080/board?page=${page}`, {
+        response = await fetch(`http://129.154.51.227:8083/board?page=${page}`, {
             method: 'GET',
             headers: {
                 'Content-Type': 'application/json',
             },
         });
     } else {
-        response = await fetch(`http://localhost:8080/board/post?tag=${tag}&page=${page}`, {
+        response = await fetch(`http://129.154.51.227:8083/board/post?tag=${tag}&page=${page}`, {
             method: 'GET',
             headers: {
                 'Content-Type': 'application/json',

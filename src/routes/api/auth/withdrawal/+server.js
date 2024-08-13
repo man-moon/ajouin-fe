@@ -1,5 +1,5 @@
 async function getResponse(accessToken) {
-    const response = await fetch('http://localhost:8080/auth/withdrawal', {
+    const response = await fetch('http://129.154.51.227:8083/auth/withdrawal', {
             method: 'DELETE',
             headers: {
                 'Content-Type': 'application/json',

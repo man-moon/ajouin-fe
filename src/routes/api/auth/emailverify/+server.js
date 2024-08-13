@@ -1,5 +1,5 @@
 async function getResponse(request) {
-    const response = await fetch('http://localhost:8080/auth/email/verify', {
+    const response = await fetch('http://129.154.51.227:8083/auth/email/verify', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json'
