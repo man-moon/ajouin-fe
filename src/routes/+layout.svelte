@@ -27,9 +27,7 @@
 				method: 'GET',
 			});
 			$reminderStore = await reminderResponse.json();
-			console.log($reminderStore);
 			$bookmarkStore = await bookmarkResponse.json();
-			console.log($bookmarkStore);
 
 		}
 	});

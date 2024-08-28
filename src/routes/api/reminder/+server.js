@@ -26,7 +26,6 @@ export const POST = async (event) => {
         noticeId: requestBody.noticeId,
         remindAt: remindAt,
     }
-    console.log(requestBody.remindAt)
 
     const response = await fetch(`${process.env.MEMBER_SERVICE_URL}/api/reminder`, {
         method: 'POST',

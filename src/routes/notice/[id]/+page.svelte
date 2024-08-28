@@ -26,9 +26,7 @@
 
 	let formattedStartDate = formatDate(startDate);
 
-	let rawNoticeData = {
-		id: null,
-		after: {
+	let noticeData = {
 			isTopFixed: '',
 			createdAt: '',
 			fetchId: '',
@@ -37,18 +35,15 @@
 			title: '',
 			html: '',
 			noticeType: '',
-			summary: ''
-		}
-	};
-
-	let noticeData;
-	$: noticeData = rawNoticeData.after;
+			summary: '',
+			date: '',
+		};
 
 	onMount(async () => {
 		const response = await fetch(`/api/notice/${$page.params.id}`, {
 			method: 'GET'
 		});
-		rawNoticeData = await response.json();
+		noticeData = await response.json();
 	});
 
 	function formatSummary(summary) {
@@ -75,7 +70,6 @@
 		if (data.status == 'SCHEDULED') {
 			formattedStartDate = formatDate(startDate);
 			$reminderStore = [...$reminderStore, { noticeId: noticeData.id, status: 'SCHEDULED' }];
-			console.log($reminderStore);
 			toast.push(
 				`<span class="font-bold">${formattedStartDate}</span>에 리마인드 메일을 보내드릴게요`
 			);
@@ -90,7 +84,6 @@
 		});
 		if (response.status == 200) {
 			$reminderStore = $reminderStore.filter((reminder) => reminder.noticeId != noticeData.id);
-			console.log($reminderStore);
 			toast.push('리마인드 메일을 보내지 않도록 설정했어요');
 		} else {
 			toast.push('리마인드 해제 도중 문제가 발생했어요');
@@ -120,22 +113,10 @@
 		});
 		if (response.status == 200) {
 			$bookmarkStore = $bookmarkStore.filter((bookmark) => bookmark.noticeId != noticeData.id);
-			console.log($bookmarkStore);
 			toast.push('북마크를 해제했어요');
 		} else {
 			toast.push('북마크 해제 도중 문제가 발생했어요');
 		}
-	}
-
-	function formatCreatedAt(createdAt) {
-		const trimmedCreatedAt = String(createdAt).slice(0, 13);
-		const date = new Date(Number(trimmedCreatedAt));
-
-		const yyyy = date.getFullYear();
-		const mm = String(date.getMonth() + 1).padStart(2, '0');
-		const dd = String(date.getDate()).padStart(2, '0');
-
-		return `${yyyy}년 ${mm}월 ${dd}일`;
 	}
 
 	const onDayClick = async () => {
@@ -154,7 +135,7 @@
 <main class="px-4 pt-1">
 	<div class="mt-2 flex justify-between items-start">
 		<div class="text-sm text-gray-600">
-			{formatCreatedAt(noticeData.createdAt)}
+			{noticeData.date}
 		</div>
 		<div class="flex gap-2">
 			<button

@@ -1,8 +1,6 @@
 <script>
     import {page} from "$app/stores";
     import { SignIn, SignOut } from "@auth/sveltekit/components"
-
-    console.log($page.data.session)
 </script>
 
 <p>
@@ -30,7 +28,6 @@
         	const response = await fetch('/api/test', {
 			method: 'GET',
 		});
-        console.log(response);
     }}>
         asdf
     </button>

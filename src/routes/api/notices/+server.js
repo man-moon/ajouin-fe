@@ -22,8 +22,6 @@ async function getResponse(types, email, offset, limit, includeTopFixed) {
         headers: headers
     });
 
-    console.log(response);
-
     return response;
 }
 
@@ -42,8 +40,6 @@ export const GET = async (event) => {
     
     const response = await getResponse(types, email, offset, limit, includeTopFixed);
     const data = await response.json();
-
-    console.log(data);
 
     return new Response(JSON.stringify(data), {
         headers: { 'Content-Type': 'application/json' }

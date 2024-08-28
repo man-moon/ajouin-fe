@@ -81,8 +81,6 @@
 			method: 'GET'
 		});
 		const data = await response.json();
-		console.log('===loadMore===');
-		console.log(data);
 		let additionalNotices = data.notice;
 		additionalNotices = additionalNotices.map((n) => {
 			if (showNotices.length > 0 && showNotices[showNotices.length - 1].id == n.id) {
@@ -117,7 +115,6 @@
 		});
 
 		const data = await response.json();
-		console.log(data);
 
 		let fetchedNotices = data.notice;
 
@@ -134,8 +131,6 @@
 		) {
 			$selectedType = $noticeStore[0].noticeType;
 		}
-		console.log("캐싱된 공지사항 데이터 저장");
-		console.log($noticeStore);
 		if (browser) {
 			localStorage.setItem(
 				'lugTcOmCFqTv9T35Detf',
@@ -157,7 +152,7 @@
 	//일반공지, 단과대공지, 학과공지
 	let noticeFilterPage;
 
-	let generalFilters = ['일반공지', '장학공지'];
+	let generalFilters = ['일반공지', '장학공지', '생활관'];
 
 	let collegeFilters = [
 		'공과대학',
@@ -257,7 +252,6 @@
 
 	onMount(async () => {
 		if ($noticeStore.length == 0) {
-			console.log("다시 공지사항 가져옴");
 			let cachedTypes = localStorage.getItem('lugTcOmCFqTv9T35Detf');
 			if (cachedTypes) {
 				cachedTypes = JSON.parse(cachedTypes);
@@ -284,8 +278,7 @@
 				await getNotices(['일반공지', '장학공지']);
 			}
 		} else {
-			console.log("캐싱된 공지사항 데이터 사용");
-			console.log($noticeStore);
+			// console.log("캐싱된 공지사항 데이터 사용");
 		}
 
 		window.addEventListener('scroll', handleScroll);

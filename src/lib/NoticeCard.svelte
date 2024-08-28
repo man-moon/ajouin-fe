@@ -21,14 +21,15 @@
 		summary: '',
 		title: '',
 		isReminded: false,
-		isBookmarked: false
+		isBookmarked: false,
+		date: '',
 	};
 
 	$: notice.isReminded = $reminderStore.some((reminder) => reminder.noticeId == notice.id);
 	$: notice.isBookmarked = $bookmarkStore.some((bookmark) => bookmark.noticeId == notice.id);
 
 	let summaryShow = false;
-	function getTimeAgo(createdAt) {
+	function getTimeAgo(createdAt, registrationDate) {
 		const now = new Date();
 		const date = new Date(createdAt);
 
@@ -36,18 +37,13 @@
 		const diffInMinutes = Math.floor(diffInSeconds / 60);
 		const diffInHours = Math.floor(diffInMinutes / 60);
 		const diffInDays = Math.floor(diffInHours / 24);
-		const diffInYears = now.getFullYear() - date.getFullYear();
-
-		if (diffInYears > 0) {
-			return;
-		}
 
 		if (diffInDays > 0) {
-			return;
+			return registrationDate;
 		}
 
 		if (diffInHours > 0) {
-			return `${diffInHours}시간 전`;
+			return registrationDate;
 		}
 
 		if (diffInMinutes > 5) {
@@ -59,7 +55,7 @@
 </script>
 
 <div
-	class="px-4 py-2 flex items-center justify-between {getTimeAgo(notice.createdAt)
+	class="px-4 py-2 flex items-center justify-between {getTimeAgo(notice.createdAt, notice.date)
 		? 'border-blue-50'
 		: ''}"
 >
@@ -71,8 +67,8 @@
 			</h4>
 		</a>
 		<div class="flex gap-4 items-center mt-2 text-sm text-gray-500">
-			{#if getTimeAgo(notice.createdAt)}
-				<div>{getTimeAgo(notice.createdAt)}</div>
+			{#if getTimeAgo(notice.createdAt, notice.date)}
+				<div>{getTimeAgo(notice.createdAt, notice.date)}</div>
 			{:else}
 				<div class="flex items-center gap-1">
 					<Icon icon="calendar" size={12} />
