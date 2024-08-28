@@ -32,8 +32,10 @@
 	function getTimeAgo(createdAt, registrationDate) {
 		const now = new Date();
 		const date = new Date(createdAt);
+		const nineHoursInMillis = 9 * 60 * 60 * 1000;
 
-		const diffInSeconds = Math.floor((now - date) / 1000);
+		const adjustedDate = new Date(date.getTime() + nineHoursInMillis);
+		const diffInSeconds = Math.floor((now - adjustedDate) / 1000);
 		const diffInMinutes = Math.floor(diffInSeconds / 60);
 		const diffInHours = Math.floor(diffInMinutes / 60);
 		const diffInDays = Math.floor(diffInHours / 24);
