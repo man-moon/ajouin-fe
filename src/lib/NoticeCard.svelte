@@ -43,7 +43,7 @@
 		}
 
 		if (diffInHours > 0) {
-			return registrationDate;
+			return `${diffInHours}시간 전`;;
 		}
 
 		if (diffInMinutes > 5) {
