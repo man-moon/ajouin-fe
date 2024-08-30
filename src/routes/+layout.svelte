@@ -34,7 +34,7 @@
 </script>
 
 <svelte:head>
-	<title>아주대학교 공지 모아</title>
+	<title>아주대학교 공지모아</title>
 	<meta
 		name="viewport"
 		content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"
