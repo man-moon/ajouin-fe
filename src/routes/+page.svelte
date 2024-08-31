@@ -304,7 +304,7 @@
 				</a>
 				<div>
 					<a href="/">
-						<h1 class="text-xl font-semibold">아주대학교 공지모아</h1>
+						<h1 class="text-xl font-semibold">아주대 공지 허브</h1>
 					</a>
 					<div class="text-xs text-gray-500 flex items-center gap-1">
 						업데이트: {latestUpdateTime}
