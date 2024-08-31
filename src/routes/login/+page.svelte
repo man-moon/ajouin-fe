@@ -47,7 +47,7 @@
 <header class="mt-32 flex flex-col items-center justify-center">
     <a href="/">
         <h1 class="flex text-blue-500 text-3xl font-extrabold">
-            아주대학교 공지모아
+            아주대 공지 허브
         </h1>
     </a>
     <div class="mt-2 font-bold text-gray-400">아주대학교 공지를 한 눈에!</div>
