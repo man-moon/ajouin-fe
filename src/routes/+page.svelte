@@ -307,7 +307,7 @@
 						<h1 class="text-xl font-semibold">아주대 공지 허브</h1>
 					</a>
 					<div class="text-xs text-gray-500 flex items-center gap-1">
-						업데이트: {latestUpdateTime}
+						<!-- 업데이트: {latestUpdateTime} -->
 						<!-- <button on:click={() => {
 							const cachedTypes = localStorage.getItem('lugTcOmCFqTv9T35Detf');
 							getNotices(cachedTypes)
