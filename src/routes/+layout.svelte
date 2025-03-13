@@ -4,6 +4,10 @@
 	import { page } from '$app/stores';
 	import { bookmarkStore, reminderStore } from '$lib/stores';
 	import { onMount } from 'svelte';
+	import { dev } from '$app/environment';
+	import { injectAnalytics } from '@vercel/analytics/sveltekit';
+
+	injectAnalytics({ mode: dev ? 'development' : 'production' });
 
 	const options = {
 		duration: 3000,
