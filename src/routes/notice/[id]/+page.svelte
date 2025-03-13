@@ -8,6 +8,20 @@
 	import Icon from '$lib/Icon.svelte';
 	import { toast } from '@zerodevx/svelte-toast';
 
+	export const prerender = true;
+
+	export async function entries() {
+	const notices = [
+		{ id: '3973' },
+		{ id: '3974' },
+		{ id: '3976' },
+	];
+	return notices.map((notice) => {
+		return { id: notice.id };
+	});
+}
+
+
 	let startDate = new Date();
 	let dateFormat = 'MM월 dd일 HH:mm';
 	let isOpen = false;
