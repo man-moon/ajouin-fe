@@ -25,15 +25,14 @@
 	onMount(async () => {
 		if ($page.data.session) {
 			// 해당 유저의 북마크 목록과 리마인더 목록을 가져온다.
-			const reminderResponse = await fetch('/api/reminder', {
+			const reminderResponse = await fetch('api/reminder', {
 				method: 'GET',
 			});
-			const bookmarkResponse = await fetch('/api/bookmark', {
+			const bookmarkResponse = await fetch('api/bookmark', {
 				method: 'GET',
 			});
 			$reminderStore = await reminderResponse.json();
 			$bookmarkStore = await bookmarkResponse.json();
-
 		}
 	});
 </script>
@@ -49,12 +48,11 @@
 	<link rel="icon" href="/favicon.png" />
 </svelte:head>
 
-<div id="main" class="w-full bg-gray-50 flex justify-center min-h-screen bg-cover bg-fixed">
-	<div class="max-w-4xl w-full bg-white">
+<div class="min-h-screen bg-background">
+	<div class="w-full bg-card shadow-sm">
 		<slot />
 	</div>
 </div>
-<!-- <Toast /> -->
 
 <div class="text-sm">
 	<SvelteToast {options} />
@@ -64,8 +62,8 @@
 	:root {
 		--toastBorderRadius: 0.5rem;
 		--toastBtnWidth: 2rem;
-		--toastBackground: #fff;
-		--toastColor: #252525;
-		--toastBorder: 1px solid #ececec;
+		--toastBackground: hsl(var(--card));
+		--toastColor: hsl(var(--card-foreground));
+		--toastBorder: 1px solid hsl(var(--border));
 	}
 </style>

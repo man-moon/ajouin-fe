@@ -3,7 +3,8 @@
 	import { toastMessage, ACCESS_TOKEN } from '$lib/stores';
 	import { slide } from 'svelte/transition';
 	import { quintOut } from 'svelte/easing';
-	import { reminderStore, bookmarkStore } from '$lib/stores';
+	import { reminderStore, bookmarkStore, viewedNotices } from '$lib/stores';
+	import { onMount } from 'svelte';
 
 	function formatSummary(summary) {
 		return summary
@@ -27,8 +28,12 @@
 
 	$: notice.isReminded = $reminderStore.some((reminder) => reminder.noticeId == notice.id);
 	$: notice.isBookmarked = $bookmarkStore.some((bookmark) => bookmark.noticeId == notice.id);
-
+  
+	// 이미 본 공지사항인지 확인
+	$: isViewed = $viewedNotices.includes(notice.id);
+	
 	let summaryShow = false;
+	
 	function getTimeAgo(createdAt, registrationDate) {
 		const now = new Date();
 		const date = new Date(createdAt);
@@ -54,61 +59,79 @@
 
 		return '방금 전';
 	}
+	
+	const timeAgo = getTimeAgo(notice.createdAt, notice.date);
+  
+	// 공지사항 클릭 시 확인된 것으로 표시
+	function handleClick() {
+		viewedNotices.markAsViewed(notice.id);
+	}
 </script>
 
-<div
-	class="px-4 py-2 flex items-center justify-between {getTimeAgo(notice.createdAt, notice.date)
-		? 'border-blue-50'
-		: ''}"
->
-	<div class="block grow">
-		<a href="/notice/{notice.id}">
-			<h4 class="text-gray-700 font-normal text-base text-left whitespace-wrap flex items-center">
-				{#if notice.isTopFixed}📌{/if}
-				{notice.title}
-			</h4>
-		</a>
-		<div class="flex gap-4 items-center mt-2 text-sm text-gray-500">
-			{#if getTimeAgo(notice.createdAt, notice.date)}
-				<div>{getTimeAgo(notice.createdAt, notice.date)}</div>
-			{:else}
-				<div class="flex items-center gap-1">
-					<Icon icon="calendar" size={12} />
-					{notice.createdAt.slice(0, 10)}
+<div class="group px-2 sm:px-3 py-3 hover:bg-muted/50 transition-colors duration-200 {isViewed ? 'bg-muted/10' : ''}">
+	<div class="grid grid-cols-[1fr,auto] gap-3">
+		<div class="min-w-0">
+			<a href="/notice/{notice.id}" class="block" on:click={handleClick}>
+				<h3 class="text-base font-medium leading-tight flex items-start gap-2 mb-1.5 group-hover:text-primary transition-colors
+                    {isViewed ? 'text-muted-foreground/80' : 'text-foreground'}">
+					<div class="flex items-center gap-1 flex-shrink-0 mt-0.5">
+						{#if notice.isTopFixed}
+							<span class="text-primary" aria-label="상단고정 공지">📌</span>
+						{/if}
+						{#if isViewed}
+							<span class="text-primary/80 text-xs bg-primary/10 rounded-full px-1.5 py-0.5 flex items-center">
+								<Icon icon="check" size={10} class="mr-0.5" />읽음
+							</span>
+						{/if}
+					</div>
+					<span class="break-words">{notice.title}</span>
+				</h3>
+			</a>
+			
+			<div class="flex items-center gap-3 text-xs text-muted-foreground">
+				{#if getTimeAgo(notice.createdAt, notice.date)}
+					<div>{getTimeAgo(notice.createdAt, notice.date)}</div>
+				{:else}
+					<div class="flex items-center gap-1">
+						<Icon icon="calendar" size={12} />
+						<span>{notice.createdAt.slice(0, 10)}</span>
+					</div>
+				{/if}
+				
+				<div class="flex gap-2">
+					{#if notice.isReminded}
+						<div class="flex items-center text-green-500" aria-label="알림 설정됨">
+							<Icon icon="bell-fill" size={12} />
+						</div>
+					{/if}
+					
+					{#if notice.isBookmarked}
+						<div class="flex items-center text-primary" aria-label="북마크됨">
+							<Icon icon="bookmark-fill" size={12} />
+						</div>
+					{/if}
 				</div>
-			{/if}
-			<div class="flex gap-2">
-				{#if notice.isReminded}
-					<div class="flex items-center gap-1 text-green-500">
-						<Icon icon="bell-fill" size={12} />
-					</div>
-				{/if}
-				{#if notice.isBookmarked}
-					<div class="flex items-center gap-1 text-blue-500">
-						<Icon icon="bookmark-fill" size={12} />
-					</div>
-				{/if}
 			</div>
 		</div>
+		
+			<button
+				on:click|stopPropagation={() => summaryShow = !summaryShow}
+				class="h-8 w-8 rounded-full flex items-center justify-center text-muted-foreground 
+				       hover:text-primary hover:bg-primary/10 transition-colors self-center"
+				aria-label={summaryShow ? "요약 접기" : "요약 펼치기"}
+			>
+				<div class="{summaryShow ? 'rotate-180' : 'rotate-0'} transition-transform duration-300">
+					<Icon icon="chevron-down" size={16} stroke_width={2} />
+				</div>
+			</button>
 	</div>
-	<button
-		class="flex items-center gap-1"
-		on:click={() => {
-			summaryShow = !summaryShow;
-		}}
-	>
-		{#if summaryShow}
-			<Icon icon="chevron-up" size={24} />
-		{:else}
-			<Icon icon="chevron-down" size={24} />
-		{/if}
-	</button>
-</div>
-{#if summaryShow}
-	<div transition:slide={{ duration: 300, easing: quintOut, axis: 'y' }}>
-		<hr />
-		<div class="px-4 py-2 bg-blue-50 text-sm text-gray-600 break-all">
-			{@html formatSummary(notice.summary)}
+	
+	{#if summaryShow}
+		<div transition:slide={{ duration: 250, easing: quintOut, axis: 'y' }} on:click|stopPropagation>
+			<div class="h-px w-full bg-muted my-2"></div>
+			<div class="p-3 bg-primary/5 rounded-md text-sm text-muted-foreground break-words shadow-sm">
+				{@html formatSummary(notice.summary)}
+			</div>
 		</div>
-	</div>
-{/if}
+	{/if}
+</div>

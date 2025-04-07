@@ -2,47 +2,184 @@
 @tailwind components;
 @tailwind utilities;
 
-::-webkit-scrollbar {
-	display: none;
+@layer base {
+  :root {
+    --background: 0 0% 100%;
+    --foreground: 222.2 84% 4.9%;
+
+    --muted: 210 40% 96.1%;
+    --muted-foreground: 215.4 16.3% 46.9%;
+
+    --popover: 0 0% 100%;
+    --popover-foreground: 222.2 84% 4.9%;
+
+    --card: 0 0% 100%;
+    --card-foreground: 222.2 84% 4.9%;
+
+    --border: 214.3 31.8% 91.4%;
+    --input: 214.3 31.8% 91.4%;
+
+    /* 아주대 메인 컬러로 primary 설정 */
+    --primary: 216 98% 52%;
+    --primary-foreground: 210 40% 98%;
+
+    --secondary: 210 40% 96.1%;
+    --secondary-foreground: 222.2 47.4% 11.2%;
+
+    --accent: 210 40% 96.1%;
+    --accent-foreground: 222.2 47.4% 11.2%;
+
+    --destructive: 0 84.2% 60.2%;
+    --destructive-foreground: 210 40% 98%;
+
+    --ring: 216 98% 52%;
+
+    --radius: 0.5rem;
+  }
+
+  .dark {
+    --background: 222.2 84% 4.9%;
+    --foreground: 210 40% 98%;
+
+    --muted: 217.2 32.6% 17.5%;
+    --muted-foreground: 215 20.2% 65.1%;
+
+    --popover: 222.2 84% 4.9%;
+    --popover-foreground: 210 40% 98%;
+
+    --card: 222.2 84% 4.9%;
+    --card-foreground: 210 40% 98%;
+
+    --border: 217.2 32.6% 17.5%;
+    --input: 217.2 32.6% 17.5%;
+
+    --primary: 217.2 91.2% 59.8%;
+    --primary-foreground: 222.2 47.4% 11.2%;
+
+    --secondary: 217.2 32.6% 17.5%;
+    --secondary-foreground: 210 40% 98%;
+
+    --accent: 217.2 32.6% 17.5%;
+    --accent-foreground: 210 40% 98%;
+
+    --destructive: 0 62.8% 30.6%;
+    --destructive-foreground: 210 40% 98%;
+
+    --ring: 217.2 91.2% 59.8%;
+  }
 }
 
-/* input, */
+@layer base {
+  * {
+    @apply border-border;
+  }
+  body {
+    @apply bg-background text-foreground;
+  }
+  h2 {
+    @apply font-bold text-2xl text-foreground mt-8 mb-4;
+  }
+  h3 {
+    @apply font-bold text-xl text-foreground/90;
+  }
+  h4 {
+    @apply font-semibold text-lg text-foreground/80;
+  }
+}
+
+@layer components {
+  .container {
+    @apply mx-auto px-2;
+    max-width: 100%;
+  }
+  
+  /* 일반 컨테이너 */
+  @media (min-width: 640px) {
+    .container {
+      max-width: 640px;
+      @apply px-4;
+    }
+  }
+  
+  @media (min-width: 768px) {
+    .container {
+      max-width: 768px;
+    }
+  }
+  
+  @media (min-width: 1024px) {
+    .container {
+      max-width: 1024px;
+    }
+  }
+  
+  @media (min-width: 1280px) {
+    .container {
+      max-width: 1280px;
+    }
+  }
+  
+  @media (min-width: 1536px) {
+    .container {
+      max-width: 1536px;
+    }
+  }
+  
+  /* 공지사항 컨테이너 (좁게) */
+  .notice-container {
+    @apply mx-auto px-2;
+    max-width: 100%;
+  }
+  
+  @media (min-width: 640px) {
+    .notice-container {
+      max-width: 640px;
+      @apply px-4;
+    }
+  }
+  
+  @media (min-width: 768px) {
+    .notice-container {
+      max-width: 768px;
+    }
+  }
+  
+  @media (min-width: 1024px) {
+    .notice-container {
+      max-width: 800px;
+    }
+  }
+  
+  @media (min-width: 1280px) {
+    .notice-container {
+      max-width: 850px;
+    }
+  }
+  
+  @media (min-width: 1536px) {
+    .notice-container {
+      max-width: 850px;
+    }
+  }
+}
+
+::-webkit-scrollbar {
+  display: none;
+}
+
+/* Removing tap highlight */
 textarea,
 button,
 select,
 a {
-	-webkit-tap-highlight-color: rgba(0, 0, 0, 0);
-	appearance: none;
-	-moz-appearance: none;
-	-webkit-appearance: none;
+  -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
+  appearance: none;
+  -moz-appearance: none;
+  -webkit-appearance: none;
 }
 
 *:focus,
 *:active {
-	outline: none !important;
-	-webkit-tap-highlight-color: transparent !important;
-}
-
-h2 {
-	font-weight: bold;
-	font-size: 1.5rem;
-	color: #000000;
-	margin-top: 4rem;
-	margin-bottom: 1rem;
-}
-
-h3 {
-	font-weight: bold;
-	font-size: 1.3rem;
-	color: #393636;
-}
-
-h4 {
-	font-weight: bold;
-	font-size: 1.1rem;
-	color: #4a5568;
-}
-
-div#main {
-    background-image: url($lib/assets/background.png);
+  outline: none !important;
+  -webkit-tap-highlight-color: transparent !important;
 }

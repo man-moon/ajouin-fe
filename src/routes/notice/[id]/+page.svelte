@@ -1,6 +1,6 @@
 <script>
 	import { page } from '$app/stores';
-	import { reminderStore, bookmarkStore } from '$lib/stores';
+	import { reminderStore, bookmarkStore, viewedNotices } from '$lib/stores';
 	import { onMount } from 'svelte';
 	import BackAppbar from '$lib/BackAppbar.svelte';
 	import { DatePicker } from '@svelte-plugins/datepicker';
@@ -11,16 +11,15 @@
 	export const prerender = true;
 
 	export async function entries() {
-	const notices = [
-		{ id: '3973' },
-		{ id: '3974' },
-		{ id: '3976' },
-	];
-	return notices.map((notice) => {
-		return { id: notice.id };
-	});
-}
-
+		const notices = [
+			{ id: '3973' },
+			{ id: '3974' },
+			{ id: '3976' },
+		];
+		return notices.map((notice) => {
+			return { id: notice.id };
+		});
+	}
 
 	let startDate = new Date();
 	let dateFormat = 'MM월 dd일 HH:mm';
@@ -41,23 +40,26 @@
 	let formattedStartDate = formatDate(startDate);
 
 	let noticeData = {
-			isTopFixed: '',
-			createdAt: '',
-			fetchId: '',
-			id: '',
-			originalUrl: '',
-			title: '',
-			html: '',
-			noticeType: '',
-			summary: '',
-			date: '',
-		};
+		isTopFixed: '',
+		createdAt: '',
+		fetchId: '',
+		id: '',
+		originalUrl: '',
+		title: '',
+		html: '',
+		noticeType: '',
+		summary: '',
+		date: '',
+	};
 
 	onMount(async () => {
 		const response = await fetch(`/api/notice/${$page.params.id}`, {
 			method: 'GET'
 		});
 		noticeData = await response.json();
+		
+		// 공지사항을 읽은 것으로 표시
+		viewedNotices.markAsViewed($page.params.id);
 	});
 
 	function formatSummary(summary) {
@@ -140,106 +142,112 @@
 
 <BackAppbar title="공지사항" />
 
-<h4 class="p-4 break-all">
-	{noticeData.title}
-</h4>
-<div class="px-4">
-	<hr />
-</div>
-<main class="px-4 pt-1">
-	<div class="mt-2 flex justify-between items-start">
-		<div class="text-sm text-gray-600">
-			{noticeData.date}
-		</div>
-		<div class="flex gap-2">
-			<button
-				class="p-1.5 rounded-lg border {setBookmark
-					? 'text-white bg-blue-500 border-blue-500'
-					: 'text-gray-500 border-gray-500'}"
-				on:click={async () => {
-						if(setBookmark) {
-							await removeBookmark();
-						} else {
-							await addBookmark();
-						}
-					}}
-			>
-				<Icon icon="bookmark" size={18} />
-			</button>
-			<div>
+<div class="notice-container px-3">
+	<div class="pt-4">
+		<h1 class="text-xl font-semibold leading-tight break-all">
+			{noticeData.title}
+		</h1>
+	</div>
+	
+	<div class="mt-2 border-b border-border/40 pb-3">
+		<div class="flex justify-between items-start">
+			<div class="text-sm text-muted-foreground">
+				{noticeData.date}
+			</div>
+			<div class="flex gap-2">
 				<button
-					class="p-1.5 rounded-lg border {setRemind
-						? 'text-white bg-blue-500 border-blue-500'
-						: 'text-gray-500 border-gray-500'}"
+					class="p-1.5 rounded-lg border {setBookmark
+						? 'text-primary-foreground bg-primary border-primary'
+						: 'text-muted-foreground border-input hover:bg-primary/10 hover:text-primary transition-colors'}"
 					on:click={async () => {
-						if (setRemind) {
-							await removeReminder();
-						} else {
-							isOpen = !isOpen;
-						}
-					}}
+							if(setBookmark) {
+								await removeBookmark();
+							} else {
+								await addBookmark();
+							}
+						}}
 				>
-					<Icon icon="bell" size={18} />
+					<Icon icon="bookmark" size={18} />
 				</button>
-				<DatePicker
-					{onDayClick}
-					bind:isOpen
-					bind:startDate
-					showTimePicker
-					enablePastDates={false}
-					enableFutureDates={true}
-					align="right"
-					showYearControls={false}
-					dowLabels={['일', '월', '화', '수', '목', '금', '토']}
-					monthLabels={[
-						'1월',
-						'2월',
-						'3월',
-						'4월',
-						'5월',
-						'6월',
-						'7월',
-						'8월',
-						'9월',
-						'10월',
-						'11월',
-						'12월'
-					]}
-					includeFont={false}
-				>
-					<input
-						class="hidden"
-						type="text"
-						placeholder="Select date"
-						bind:value={formattedStartDate}
-					/>
-				</DatePicker>
+				<div>
+					<button
+						class="p-1.5 rounded-lg border {setRemind
+							? 'text-primary-foreground bg-primary border-primary'
+							: 'text-muted-foreground border-input hover:bg-primary/10 hover:text-primary transition-colors'}"
+						on:click={async () => {
+							if (setRemind) {
+								await removeReminder();
+							} else {
+								isOpen = !isOpen;
+							}
+						}}
+					>
+						<Icon icon="bell" size={18} />
+					</button>
+					<DatePicker
+						{onDayClick}
+						bind:isOpen
+						bind:startDate
+						showTimePicker
+						enablePastDates={false}
+						enableFutureDates={true}
+						align="right"
+						showYearControls={false}
+						dowLabels={['일', '월', '화', '수', '목', '금', '토']}
+						monthLabels={[
+							'1월',
+							'2월',
+							'3월',
+							'4월',
+							'5월',
+							'6월',
+							'7월',
+							'8월',
+							'9월',
+							'10월',
+							'11월',
+							'12월'
+						]}
+						includeFont={false}
+					>
+						<input
+							class="hidden"
+							type="text"
+							placeholder="Select date"
+							bind:value={formattedStartDate}
+						/>
+					</DatePicker>
+				</div>
 			</div>
 		</div>
 	</div>
 
-	<div class="mt-4">
-		<div class="font-bold text-lg">세 줄 요약</div>
-		<div class="mt-1 rounded-lg text-sm bg-blue-50 p-4">
+	<div class="mt-6">
+		<div class="flex items-center gap-2 mb-2">
+			<div class="text-lg font-semibold">세 줄 요약</div>
+		</div>
+		<div class="rounded-lg text-sm bg-primary/5 p-3 border border-border/40">
 			{@html formatSummary(noticeData.summary)}
 		</div>
 	</div>
 
 	<div class="mt-8">
-		<div class="font-bold text-lg mb-1">본문</div>
-		{@html noticeData.html}
+		<div class="text-lg font-semibold mb-4">본문</div>
+		<div class="prose prose-sm max-w-none">
+			{@html noticeData.html}
+		</div>
 	</div>
 
-	<hr class="mt-12" />
-
-	<a href="/" class="block mt-4 w-full py-3 bg-blue-500 rounded-lg text-white text-center">
-		공지사항 목록
-	</a>
-	<a
-		href={noticeData.originalUrl}
-		target="_blank"
-		class="block mt-2 mb-12 w-full py-3 bg-blue-500 rounded-lg text-white text-center"
-	>
-		원문 바로가기
-	</a>
-</main>
+	<div class="border-t border-border/40 mt-10 pt-6 pb-12 flex flex-col gap-3">
+		<a href="/" class="inline-flex justify-center py-2.5 px-4 rounded-md bg-primary text-primary-foreground hover:bg-primary/90 transition-colors">
+			공지사항 목록
+		</a>
+		<a
+			href={noticeData.originalUrl}
+			target="_blank"
+			class="inline-flex justify-center py-2.5 px-4 rounded-md bg-secondary text-secondary-foreground hover:bg-secondary/90 transition-colors"
+		>
+			원문 바로가기
+		</a>
+	</div>
+</div>
